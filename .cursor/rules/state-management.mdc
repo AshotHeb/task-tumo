@@ -1,0 +1,188 @@
+---
+description: Guidelines for Pinia state management using Setup Store pattern with TypeScript
+globs: ["**/stores/**/*.ts"]
+alwaysApply: true
+---
+
+# State Management with Pinia
+
+## Store Structure
+
+### Folder Organization
+
+- Each entity should have its own folder: `src/stores/{entity}/`
+- Each store folder must contain:
+  - `types.ts` - TypeScript type definitions
+  - `index.ts` - Main store logic
+
+### File Structure Example
+
+```
+stores/
+  ├── counter/
+  │   ├── types.ts
+  │   └── index.ts
+  ├── user/
+  │   ├── types.ts
+  │   └── index.ts
+  └── index.ts (exports all stores)
+```
+
+## Store Implementation Rules
+
+### 1. Use Setup Store Pattern (Composition API)
+
+- Always use `defineStore` with a function (setup store), NOT options API
+- Use `ref()` for state, `computed()` for getters, regular functions for actions
+- Example:
+
+```typescript
+export const useCounterStore = defineStore("counter", () => {
+  const count = ref(0);
+  const doubleCount = computed(() => count.value * 2);
+
+  function increment() {
+    count.value++;
+  }
+
+  return { count, doubleCount, increment };
+});
+```
+
+### 2. Type Definitions (types.ts)
+
+- Create separate interfaces for State, Getters, and Actions
+- Use descriptive JSDoc comments for each interface
+- Export a combined type: `EntityStore = EntityState & EntityGetters & EntityActions`
+- Example:
+
+```typescript
+export interface CounterState {
+  count: number;
+  step: number;
+}
+
+export interface CounterGetters {
+  doubleCount: number;
+  isEven: boolean;
+}
+
+export interface CounterActions {
+  increment: () => void;
+  decrement: () => void;
+  reset: () => void;
+}
+
+export type CounterStore = CounterState & CounterGetters & CounterActions;
+```
+
+### 3. Store Implementation (index.ts)
+
+- Import types from `./types`
+- Use type annotations for refs and computed: `ref<StateType["property"]>(initialValue)`
+- Group code with comments: `// State`, `// Getters`, `// Actions`
+- Return all state, getters, and actions in a single object
+- Export types at the end: `export type { ... } from "./types"`
+- Example:
+
+```typescript
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+import type { CounterState, CounterGetters } from "./types";
+
+export const useCounterStore = defineStore("counter", () => {
+  // State
+  const count = ref<CounterState["count"]>(0);
+  const step = ref<CounterState["step"]>(1);
+
+  // Getters
+  const doubleCount = computed<CounterGetters["doubleCount"]>(
+    () => count.value * 2
+  );
+
+  // Actions
+  function increment(): void {
+    count.value += step.value;
+  }
+
+  return {
+    // State
+    count,
+    step,
+    // Getters
+    doubleCount,
+    // Actions
+    increment,
+  };
+});
+
+export type {
+  CounterStore,
+  CounterState,
+  CounterGetters,
+  CounterActions,
+} from "./types";
+```
+
+## Best Practices
+
+### State Management
+
+- Use `ref()` for all state properties
+- Initialize state with default values
+- Keep state flat and normalized when possible
+
+### Getters (Computed Properties)
+
+- Use `computed()` for all derived state
+- Getters should be pure functions (no side effects)
+- Access other getters using `this.getterName` if needed
+- Type getters explicitly: `computed<GettersType["property"]>(() => ...)`
+
+### Actions
+
+- Actions can be async (return Promises)
+- Actions can call other actions using `this.actionName()`
+- Actions should mutate state directly (no need for mutations like Vuex)
+- Type action parameters and return values explicitly
+
+### TypeScript
+
+- Always use TypeScript types, never use `any`
+- Use interface types from `types.ts` for refs and computed
+- Export all types from `index.ts` for easy importing
+- Use type annotations: `ref<Type["property"]>(value)`
+
+### Store Exports
+
+- Main `stores/index.ts` should only export store hooks: `export { useCounterStore } from "./counter"`
+- Do NOT export types or selectors from main index (import directly from store folder)
+- Each store's `index.ts` exports its own types
+
+### Component Usage
+
+- Import store hook: `import { useCounterStore } from '@/stores'`
+- Initialize in component: `const store = useCounterStore()`
+- Access state/getters directly: `store.count`, `store.doubleCount`
+- Call actions: `store.increment()`
+- For destructuring, use `storeToRefs()` to maintain reactivity:
+
+```typescript
+import { storeToRefs } from "pinia";
+const { count, doubleCount } = storeToRefs(store);
+const { increment } = store; // Actions don't need reactivity
+```
+
+## Anti-Patterns to Avoid
+
+### ❌ Don't Forget Type Exports
+
+- Always export types from store's index.ts
+- Don't export types from main stores/index.ts
+
+## File Naming Conventions
+
+- Store folders: lowercase, singular (e.g., `counter/`, `user/`)
+- Type file: always `types.ts`
+- Store file: always `index.ts`
+- Store hook: `use{Entity}Store` (e.g., `useCounterStore`)

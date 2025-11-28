@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Error Handling
+
+## TypeScript Errors
+- remove all unused imports if they appeared after AI-assisted changes

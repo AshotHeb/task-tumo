@@ -1,0 +1,13 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+---
+
+description: Guidelines for Vue component design, state management, and performance optimization
+globs: ["**/*.vue"]
+alwaysApply: true
+
+---

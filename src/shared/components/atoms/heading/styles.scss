@@ -1,0 +1,59 @@
+// Heading component scoped styles
+
+.heading {
+  &__container {
+    @apply space-y-4;
+  }
+
+  // Primary variant - Large, bold, centered
+  &--primary {
+    .heading__title {
+      @apply text-center;
+      color: var(--heading-primary-color, theme("colors.indigo.600"));
+    }
+
+    .heading__subtitle {
+      @apply text-left;
+      color: var(--heading-primary-subtitle-color, theme("colors.gray.600"));
+    }
+  }
+
+  // Secondary variant - Medium, semibold, left-aligned
+  &--secondary {
+    .heading__title {
+      @apply text-left;
+      color: var(--heading-secondary-color, theme("colors.gray.900"));
+    }
+
+    .heading__subtitle {
+      @apply text-left;
+      color: var(--heading-secondary-subtitle-color, theme("colors.gray.500"));
+    }
+  }
+
+  // Tertiary variant - Small, medium weight
+  &--tertiary {
+    .heading__title {
+      @apply text-left;
+      color: var(--heading-tertiary-color, theme("colors.gray.700"));
+    }
+
+    .heading__subtitle {
+      @apply text-left;
+      color: var(--heading-tertiary-subtitle-color, theme("colors.gray.400"));
+    }
+  }
+
+  // Muted variant - Subtle, muted colors
+  &--muted {
+    .heading__title {
+      @apply text-left;
+      color: var(--heading-muted-color, theme("colors.gray.500"));
+    }
+
+    .heading__subtitle {
+      @apply text-left;
+      color: var(--heading-muted-subtitle-color, theme("colors.gray.400"));
+    }
+  }
+}

@@ -1,0 +1,548 @@
+---
+description: Guidelines for Vue component structure, organization, and implementation patterns
+globs: ["**/components/**/*.vue", "**/components/**/*.ts"]
+alwaysApply: true
+---
+
+# Component Development Rules
+
+## Component Folder Structure
+
+### Atomic Design Pattern
+
+- Components are organized in: `atoms/`, `molecules/`, `organisms/`
+- Each component gets its own folder: `{component-name}/`
+- Folder names should be lowercase, kebab-case (e.g., `text/`, `button/`, `card-header/`)
+
+### Required Files in Each Component Folder
+
+```
+{component-name}/
+├── {ComponentName}.vue    # Main component file (PascalCase)
+├── types.ts               # TypeScript type definitions
+├── utils.ts               # Utility functions (if needed)
+├── styles.scss            # Component styles (scoped)
+├── index.ts               # Component exports
+└── composables/           # Composables folder (if needed)
+    └── use-{name}/        # Composable folder (e.g., use-heading/)
+        ├── types.ts       # Composable type definitions
+        ├── index.ts       # Main composable logic
+        └── utils.ts       # Composable utility functions (if needed)
+```
+
+## Component File Structure
+
+### 1. Component File ({ComponentName}.vue)
+
+**Template Section:**
+
+- Use semantic HTML
+- Prefer composition over deep nesting
+- Use `<slot />` for content projection
+- Use `v-bind="$attrs"` for attribute forwarding (when needed)
+- Use `:class` for dynamic styling
+
+**Script Section:**
+
+- Always use `<script setup lang="ts">`
+- Import types from `./types`
+- Import utilities from `./utils` (if needed)
+- Import composables from `./composables/use-{name}` (if needed)
+- Use `withDefaults(defineProps<PropsType>(), {...})` for props with defaults
+- Use `computed()` for derived state
+- Use `useAttrs()` when handling attributes manually
+
+**Style Section:**
+
+- Always use `<style scoped lang="scss">` for component styles
+- Import component SCSS file: `@import "./styles.scss"`
+- Keep styles isolated and scoped to the component
+
+**Example:**
+
+```vue
+<template>
+  <component :is="tag" :class="mergedClasses" v-bind="filteredAttrs">
+    <slot />
+  </component>
+</template>
+
+<script setup lang="ts">
+import { computed, useAttrs } from "vue";
+import type { ComponentProps } from "./types";
+import { getComponentClasses, filterAttrs } from "./utils";
+
+const props = withDefaults(defineProps<ComponentProps>(), {
+  // defaults
+});
+
+const attrs = useAttrs();
+const mergedClasses = computed(() => getComponentClasses(props));
+</script>
+
+<style scoped lang="scss">
+@import "./styles.scss";
+</style>
+```
+
+### 2. Types File (types.ts)
+
+**Structure:**
+
+- Export all type definitions used by the component
+- Use descriptive JSDoc comments
+- Group related types together
+- Export props interface as `{ComponentName}Props`
+
+**Example:**
+
+```typescript
+/**
+ * Component size options
+ */
+export type ComponentSize = "sm" | "md" | "lg";
+
+/**
+ * Component variant options
+ */
+export type ComponentVariant = "primary" | "secondary" | "tertiary";
+
+/**
+ * Component props interface
+ */
+export interface ComponentProps {
+  /**
+   * Component size
+   */
+  size?: ComponentSize;
+  /**
+   * Component variant
+   */
+  variant?: ComponentVariant;
+}
+```
+
+### 3. Utils File (utils.ts)
+
+**When to create:**
+
+- Component has complex class generation logic
+- Component has reusable utility functions
+- Component has mapping objects (e.g., size to Tailwind classes)
+
+**Structure:**
+
+- Export pure functions (no side effects)
+- Use TypeScript types from `./types`
+- Add JSDoc comments for exported functions
+- Keep mapping objects as constants
+
+**Example:**
+
+```typescript
+import type { ComponentProps } from "./types";
+
+const SIZE_MAP: Record<NonNullable<ComponentProps["size"]>, string> = {
+  sm: "text-sm",
+  md: "text-base",
+  lg: "text-lg",
+};
+
+/**
+ * Generates CSS classes for component
+ * @param props - Component props
+ * @returns Space-separated string of CSS classes
+ */
+export function getComponentClasses(props: ComponentProps): string {
+  const classes: string[] = [];
+  if (props.size) {
+    classes.push(SIZE_MAP[props.size]);
+  }
+  return classes.join(" ");
+}
+```
+
+### 4. Index File (index.ts)
+
+**Purpose:**
+
+- Export the component as default
+- Export all types
+- Export utility functions (if needed)
+
+**Example:**
+
+```typescript
+export { default as ComponentName } from "./ComponentName.vue";
+export type { ComponentSize, ComponentVariant, ComponentProps } from "./types";
+export { getComponentClasses } from "./utils";
+```
+
+### 5. Styles File (styles.scss)
+
+**Purpose:**
+
+- Contains all component-specific styles
+- Uses scoped styles to prevent style leakage
+- Can use Tailwind `@apply` directive
+- Can use CSS custom properties for theming
+
+**Structure:**
+
+- Use BEM-like naming convention (e.g., `.component__element--modifier`)
+- Group styles by variant or state
+- Use CSS custom properties for dynamic values
+
+**Example:**
+
+```scss
+// Component scoped styles
+.component {
+  &__container {
+    @apply space-y-4;
+  }
+
+  &--primary {
+    .component__title {
+      @apply text-center;
+      color: var(--component-primary-color, theme("colors.indigo.600"));
+    }
+  }
+}
+```
+
+**Import in Vue file:**
+
+```vue
+<style scoped lang="scss">
+@import "./styles.scss";
+</style>
+```
+
+### 6. Composables Structure
+
+**When to create:**
+
+- Component has complex logic that can be extracted
+- Logic can be reused across multiple components
+- Logic needs to be tested independently
+
+**Folder Structure:**
+
+```
+{component-name}/
+└── composables/
+    └── use-{name}/          # Composable folder (e.g., use-heading/)
+        ├── types.ts         # Composable type definitions
+        ├── index.ts         # Main composable logic
+        └── utils.ts         # Composable utility functions (if needed)
+```
+
+**Composable File (index.ts):**
+
+- Export composable function with `use` prefix: `useHeading`, `useButton`, etc.
+- Accept props or reactive values as parameters
+- Return computed properties and reactive state
+- Use TypeScript types from `./types`
+
+**Example:**
+
+```typescript
+// composables/use-heading/index.ts
+import { computed, type ComputedRef } from "vue";
+import type { HeadingVariant } from "./types";
+import { getVariantConfig } from "./utils";
+
+export function useHeading(
+  variant: ComputedRef<HeadingVariant> | HeadingVariant
+) {
+  const variantValue = computed(() =>
+    typeof variant === "object" && "value" in variant ? variant.value : variant
+  );
+
+  const config = computed(() => getVariantConfig(variantValue.value));
+
+  return {
+    config,
+    // ... other computed properties
+  };
+}
+```
+
+**Composable Types (types.ts):**
+
+- Export all types used by the composable
+- Use descriptive JSDoc comments
+- Group related types together
+
+**Composable Utils (utils.ts):**
+
+- Export pure functions used by the composable
+- Use TypeScript types from `./types`
+- Add JSDoc comments for exported functions
+
+**Usage in Component:**
+
+```vue
+<script setup lang="ts">
+import { computed } from "vue";
+import { useHeading } from "./composables/use-heading";
+
+const props = defineProps<HeadingProps>();
+const { config, titleTag } = useHeading(computed(() => props.variant));
+</script>
+```
+
+## Component Implementation Rules
+
+### Props Definition
+
+- Always define props interface in `types.ts`
+- Use `withDefaults()` for props with default values
+- Use descriptive prop names
+- Add JSDoc comments for complex props
+- Use union types for variant props (e.g., `"primary" | "secondary"`)
+
+### State Management
+
+- Use `ref()` for reactive state
+- Use `computed()` for derived state
+- Keep state local to component unless shared globally
+- Use Pinia stores for global state (see state-management.mdc)
+
+### Styling
+
+- **Always create a `styles.scss` file** for component-specific styles
+- Import SCSS file in `<style scoped lang="scss">` block: `@import "./styles.scss"`
+- Use Tailwind CSS utility classes in templates
+- Use Tailwind `@apply` directive in SCSS files
+- Extract class generation logic to `utils.ts` if complex
+- Support Vue's native `class` attribute via `$attrs`
+- Use `:class` binding for dynamic classes
+- Use CSS custom properties for theming
+- Avoid inline styles unless necessary
+- Keep styles scoped to prevent style leakage
+
+### Component Composition
+
+- Use slots for content projection
+- Use named slots for multiple content areas
+- Use scoped slots when passing data to parent
+- Prefer composition over prop drilling
+
+### Attribute Handling
+
+- Use `v-bind="$attrs"` to forward attributes
+- Filter out conflicting attributes (e.g., `class`) when needed
+- Use `useAttrs()` to access attributes programmatically
+- Merge component classes with user-provided classes
+
+## Import/Export Patterns
+
+### Importing Components
+
+- Import directly from component folder: `import { Text } from '@/shared/components/atoms/text'`
+- Import types separately: `import type { TextProps } from '@/shared/components/atoms/text/types'`
+- Do NOT use central index files (e.g., `atoms/index.ts`)
+
+### Exporting Components
+
+- Each component folder has its own `index.ts`
+- Export component as named export: `export { default as ComponentName } from "./ComponentName.vue"`
+- Export types: `export type { ... } from "./types"`
+- Export utilities if needed: `export { ... } from "./utils"`
+
+## File Naming Conventions
+
+- Component folders: lowercase, kebab-case (e.g., `text/`, `button-group/`)
+- Component files: PascalCase (e.g., `Text.vue`, `ButtonGroup.vue`)
+- Type files: always `types.ts`
+- Utility files: always `utils.ts`
+- Index files: always `index.ts`
+
+## Best Practices
+
+### Component Design
+
+- Keep components focused and single-purpose
+- Extract reusable logic to utilities
+- Use TypeScript for type safety
+- Document complex logic with comments
+- Keep components small and composable
+
+### Code Organization
+
+- Group related code together (state, computed, methods)
+- Use comments to separate sections
+- Keep template clean and readable
+- Extract complex logic to utility functions
+
+### Performance
+
+- Use `computed()` for expensive calculations
+- Avoid unnecessary re-renders
+- Use `v-memo` for expensive list items (if needed)
+- Lazy load heavy components
+
+## Anti-Patterns to Avoid
+
+### ❌ Don't Use Options API
+
+```vue
+<!-- BAD -->
+<script>
+export default {
+  props: { ... },
+  data() { ... }
+}
+</script>
+```
+
+### ❌ Don't Mix Component Files in Root
+
+```
+<!-- BAD -->
+atoms/
+├── Text.vue
+├── Button.vue
+└── types.ts
+```
+
+### ❌ Don't Create Central Index Files
+
+```
+<!-- BAD -->
+atoms/
+└── index.ts (exports all components)
+```
+
+### ❌ Don't Use Inline Types
+
+```vue
+<!-- BAD -->
+<script setup lang="ts">
+interface Props {
+  // types here
+}
+</script>
+```
+
+### ❌ Don't Forget Type Exports
+
+- Always export types from component's `index.ts`
+- Don't export from central index files
+
+### ❌ Don't Put Styles in Component File
+
+```vue
+<!-- BAD -->
+<style scoped>
+.component {
+  color: red;
+}
+</style>
+```
+
+**Instead, use separate SCSS file:**
+
+```vue
+<!-- GOOD -->
+<style scoped lang="scss">
+@import "./styles.scss";
+</style>
+```
+
+### ❌ Don't Put Composables in Component File
+
+```vue
+<!-- BAD -->
+<script setup lang="ts">
+const variantConfig = { ... };
+const config = computed(() => variantConfig[props.variant]);
+</script>
+```
+
+**Instead, extract to composable:**
+
+```vue
+<!-- GOOD -->
+<script setup lang="ts">
+import { useHeading } from "./composables/use-heading";
+const { config } = useHeading(computed(() => props.variant));
+</script>
+```
+
+### ❌ Don't Create Composables Without Folder Structure
+
+```
+<!-- BAD -->
+heading/
+├── Heading.vue
+└── useHeading.ts  # ❌ Wrong location
+```
+
+**Instead, use proper folder structure:**
+
+```
+<!-- GOOD -->
+heading/
+├── Heading.vue
+└── composables/
+    └── use-heading/
+        ├── types.ts
+        ├── index.ts
+        └── utils.ts
+```
+
+## Component Examples
+
+### Simple Component (no utils needed)
+
+```
+button/
+├── Button.vue
+├── types.ts
+└── index.ts
+```
+
+### Complex Component (with utils and composables)
+
+```
+heading/
+├── Heading.vue
+├── types.ts
+├── utils.ts
+├── styles.scss
+├── index.ts
+└── composables/
+    └── use-heading/
+        ├── types.ts
+        ├── index.ts
+        └── utils.ts
+```
+
+### Simple Component (with styles)
+
+```
+button/
+├── Button.vue
+├── types.ts
+├── styles.scss
+└── index.ts
+```
+
+## Component Usage in Other Components
+
+```vue
+<script setup lang="ts">
+// Import from component folder directly
+import { Text } from "@/shared/components/atoms/text";
+import { Button } from "@/shared/components/atoms/button";
+import type { TextProps } from "@/shared/components/atoms/text/types";
+</script>
+
+<template>
+  <Text size="lg" weight="bold">Hello</Text>
+  <Button variant="primary">Click</Button>
+</template>
+```

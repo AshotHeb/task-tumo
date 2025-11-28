@@ -1,0 +1,145 @@
+---
+description: Guidelines for Vue Router setup, route configuration, and page structure
+globs: ["**/router/**/*.ts", "**/pages/**/*.vue", "**/containers/**/*.vue"]
+alwaysApply: true
+---
+
+# Routing Rules
+
+## Router Structure
+
+### Router Configuration
+
+- Router config file: `src/router/index.ts`
+- Use `createRouter` with `createWebHistory` for history mode
+- Define routes as `RouteRecordRaw[]` array
+- Use lazy loading for route components: `() => import("@/pages/...")`
+
+### Route Definition
+
+```typescript
+{
+  path: "/route-path",
+  name: "route-name",
+  component: () => import("@/pages/PageName.vue"),
+}
+```
+
+## Page Structure
+
+### Pages Folder (`src/pages/`)
+
+- Pages are thin wrappers that import from containers
+- Each page file should only import and render the container component
+- No logic, styles, or complex templates in pages
+
+**Example:**
+
+```vue
+<template>
+  <HomeContainer />
+</template>
+
+<script setup lang="ts">
+import { HomeContainer } from "@/containers/home";
+</script>
+```
+
+## Container Structure
+
+### Containers Folder (`src/containers/`)
+
+- Containers hold the actual component logic and templates
+- Each container folder should contain:
+  - `{ContainerName}.vue` - Main component with template and logic
+  - `styles.scss` - Component-specific styles
+  - `index.ts` - Component export
+
+**Example Structure:**
+
+```
+containers/
+└── home/
+    ├── Home.vue       # Full template and logic
+    ├── styles.scss    # Component styles
+    └── index.ts       # Export component
+```
+
+## Import Patterns
+
+### Router Imports
+
+- Use `@/pages/` for route component imports
+- Use `@/containers/` for container imports
+
+### Page Imports
+
+- Pages import from `@/containers/{container-name}`
+- Use named exports from container `index.ts`
+
+## Best Practices
+
+### Route Naming
+
+- Use kebab-case for paths: `/about-us`, `/user-profile`
+- Use camelCase for route names: `aboutUs`, `userProfile`
+- Keep route names descriptive and unique
+
+### Lazy Loading
+
+- Always use lazy loading for route components
+- Improves initial bundle size and load time
+
+### Container Organization
+
+- One container per route/page
+- Containers handle all business logic
+- Pages are just routing entry points
+
+## Anti-Patterns to Avoid
+
+### ❌ Don't Put Logic in Pages
+
+```vue
+<!-- BAD -->
+<template>
+  <div>
+    <!-- Complex template -->
+  </div>
+</template>
+<script setup lang="ts">
+// Complex logic here
+</script>
+```
+
+**Instead, use containers:**
+
+```vue
+<!-- GOOD -->
+<template>
+  <HomeContainer />
+</template>
+<script setup lang="ts">
+import { HomeContainer } from "@/containers/home";
+</script>
+```
+
+### ❌ Don't Use Synchronous Imports in Routes
+
+```typescript
+// BAD
+import Home from "@/pages/Home.vue";
+component: Home;
+```
+
+**Instead, use lazy loading:**
+
+```typescript
+// GOOD
+component: () => import("@/pages/Home.vue");
+```
+
+### ❌ Don't Mix Pages and Containers Logic
+
+- Pages should not contain styles or complex templates
+- Containers should not be imported directly in router config
