@@ -1,0 +1,265 @@
+---
+description: Guidelines for API service structure, entity organization, and HTTP request patterns
+globs: ["**/api/**/*.ts"]
+alwaysApply: true
+---
+
+# API Service Rules
+
+## API Structure
+
+### Folder Organization
+
+- API client configuration: `src/api/client.ts`
+- API types and utilities: `src/api/types.ts`, `src/api/index.ts`
+- Entity-specific APIs: `src/api/entities/{entity-name}/`
+
+### Entity API Structure
+
+Each entity should have its own folder with:
+
+```
+api/entities/{entity-name}/
+├── index.ts      # API functions
+├── types.ts      # Entity type definitions
+└── consts.ts     # API endpoint URLs
+```
+
+## Entity API Files
+
+### 1. Types File (types.ts)
+
+- Export entity interfaces/types
+- Use descriptive JSDoc comments
+- Group related types together
+
+**Example:**
+
+```typescript
+/**
+ * Task entity from API
+ */
+export interface Task {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+}
+```
+
+### 2. Constants File (consts.ts)
+
+- Export API endpoint URLs
+- Use `as const` for type safety
+- Group URLs in an object
+
+**Example:**
+
+```typescript
+/**
+ * Tasks API endpoints
+ */
+export const TASKS_API_URLS = {
+  GET_TASKS: "https://api.example.com/tasks",
+  GET_TASK_BY_ID: (id: number) => `https://api.example.com/tasks/${id}`,
+} as const;
+```
+
+### 3. Index File (index.ts)
+
+- Import API helpers from `../../index`
+- Import types from `./types`
+- Import constants from `./consts`
+- Export API functions
+- Re-export types for convenience
+
+**Example:**
+
+```typescript
+import { get, post } from "../../index";
+import type { AxiosResponse } from "axios";
+import type { ApiResponse } from "../../types";
+import type { Task } from "./types";
+import { TASKS_API_URLS } from "./consts";
+
+export async function getTasks(): Promise<AxiosResponse<ApiResponse<Task[]>>> {
+  return get<Task[]>(TASKS_API_URLS.GET_TASKS);
+}
+
+export type { Task } from "./types";
+```
+
+## API Function Patterns
+
+### Function Naming
+
+- Use descriptive names: `getTasks`, `createTask`, `updateTask`, `deleteTask`
+- Use camelCase for function names
+- Prefix with HTTP method when needed: `get`, `post`, `put`, `patch`, `delete`
+
+### Type Safety
+
+- Always use TypeScript generics for response types
+- Import types from `./types`
+- Use `ApiResponse<T>` wrapper type from `../../types`
+
+### Error Handling
+
+- Let errors bubble up to the caller
+- Use try-catch in components/stores, not in API functions
+- API functions should return promises that can be caught
+
+## Import Patterns
+
+### In Components/Stores
+
+```typescript
+// Import API function
+import { getTasks } from "@/api/entities/tasks";
+
+// Import types
+import type { Task } from "@/api/entities/tasks";
+```
+
+### In API Entity Files
+
+```typescript
+// Import API helpers
+import { get, post, put, del } from "../../index";
+
+// Import shared types
+import type { ApiResponse, ApiError } from "../../types";
+
+// Import entity types
+import type { Task } from "./types";
+
+// Import constants
+import { TASKS_API_URLS } from "./consts";
+```
+
+## Best Practices
+
+### URL Management
+
+- Always use constants from `consts.ts` for URLs
+- Never hardcode URLs in API functions
+- Use template functions for dynamic URLs
+
+### Response Handling
+
+- Handle both wrapped (`{ data: T }`) and direct (`T`) response formats
+- Extract data consistently in components/stores
+
+**Example:**
+
+```typescript
+const response = await getTasks();
+const tasks = Array.isArray(response.data.data)
+  ? response.data.data
+  : Array.isArray(response.data)
+  ? response.data
+  : [];
+```
+
+### Loading States
+
+- Handle loading states in Pinia stores or components
+- Don't handle loading in API functions
+- Use refs for loading state management
+
+## Anti-Patterns to Avoid
+
+### ❌ Don't Hardcode URLs
+
+```typescript
+// BAD
+export async function getTasks() {
+  return get("https://api.example.com/tasks");
+}
+```
+
+**Instead, use constants:**
+
+```typescript
+// GOOD
+import { TASKS_API_URLS } from "./consts";
+
+export async function getTasks() {
+  return get(TASKS_API_URLS.GET_TASKS);
+}
+```
+
+### ❌ Don't Handle Loading in API Functions
+
+```typescript
+// BAD
+export async function getTasks() {
+  loading.value = true;
+  try {
+    return await get(...);
+  } finally {
+    loading.value = false;
+  }
+}
+```
+
+**Instead, handle loading in stores/components:**
+
+```typescript
+// GOOD
+// In store or component
+const loading = ref(false);
+loading.value = true;
+try {
+  const response = await getTasks();
+} finally {
+  loading.value = false;
+}
+```
+
+### ❌ Don't Mix Types and Functions
+
+```typescript
+// BAD - types.ts
+export interface Task { ... }
+export async function getTasks() { ... }
+```
+
+**Instead, separate concerns:**
+
+```typescript
+// GOOD - types.ts
+export interface Task { ... }
+
+// GOOD - index.ts
+export async function getTasks() { ... }
+```
+
+### ❌ Don't Create API Functions Without Entity Folder
+
+```
+<!-- BAD -->
+api/
+└── tasks.ts  # ❌ Wrong location
+```
+
+**Instead, use proper structure:**
+
+```
+<!-- GOOD -->
+api/
+└── entities/
+    └── tasks/
+        ├── index.ts
+        ├── types.ts
+        └── consts.ts
+```
+
+## Example Entity Structure
+
+```
+api/entities/tasks/
+├── types.ts      # Task interface
+├── consts.ts     # API URLs
+└── index.ts      # getTasks(), createTask(), etc.
+```
