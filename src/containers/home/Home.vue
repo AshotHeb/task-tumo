@@ -1,12 +1,8 @@
 <template>
-  <Layout>
-    <div class="home"></div>
-  </Layout>
+  <div class="home"></div>
 </template>
 
-<script setup lang="ts">
-import Layout from "@/layout/Layout.vue";
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="scss">
 @import "./styles.scss";
