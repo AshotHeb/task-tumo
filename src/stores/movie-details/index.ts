@@ -1,11 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import type {
-  MovieDetailsState,
-  MovieDetailsGetters,
-  MovieDetailsActions,
-} from "./types";
-import { getMovieById } from "@/api/entities/movies";
+import type { MovieDetailsState, MovieDetailsGetters } from "./types";
+import { getMovieById, getMovieVideos } from "@/api/entities/movies";
 import type { MovieDetails } from "@/api/entities/movies/types";
 
 export const useMovieDetailsStore = defineStore("movie-details", () => {
@@ -38,8 +34,23 @@ export const useMovieDetailsStore = defineStore("movie-details", () => {
     isFetchMovieDetailsLoading.value = true;
 
     try {
-      const response = await getMovieById(id);
-      const movieDetails = response.data;
+      // Fetch movie details and videos in parallel using Promise.all
+      const [movieResponse, videosResponse] = await Promise.all([
+        getMovieById(id),
+        getMovieVideos(id).catch((error) => {
+          // If videos fetch fails, return null (videos are optional)
+          console.warn(`Failed to fetch videos for movie ${id}:`, error);
+          return { data: null };
+        }),
+      ]);
+
+      const movieDetails = movieResponse.data;
+
+      // Merge videos data into movie details
+      if (videosResponse.data) {
+        movieDetails.videos = videosResponse.data;
+      }
+
       cacheMovie(movieDetails);
     } catch (error) {
       console.error("Error fetching movie details:", error);
@@ -68,4 +79,3 @@ export type {
   MovieDetailsGetters,
   MovieDetailsActions,
 } from "./types";
-

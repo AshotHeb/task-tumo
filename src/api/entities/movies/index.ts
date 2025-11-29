@@ -1,10 +1,10 @@
 import axios, { type AxiosResponse } from "axios";
 import type {
-  Movie,
   MovieDetails,
   MoviesResponse,
   SearchMoviesParams,
   PopularMoviesParams,
+  VideosResponse,
 } from "./types";
 import { MOVIES_API_URLS } from "./consts";
 
@@ -56,6 +56,21 @@ export async function getMovieById(
   return axios.get<MovieDetails>(url);
 }
 
+/**
+ * Get movie videos (trailers, teasers, etc.) from TMDb API
+ * @param id - Movie ID
+ * @param params - Query parameters (language)
+ * @returns Promise with videos response
+ */
+export async function getMovieVideos(
+  id: number,
+  params?: { language?: string }
+): Promise<AxiosResponse<VideosResponse>> {
+  const url = MOVIES_API_URLS.getMovieVideos(id, params);
+  // TMDb API returns data directly, not wrapped in ApiResponse
+  return axios.get<VideosResponse>(url);
+}
+
 export type {
   Movie,
   MovieDetails,
@@ -66,4 +81,6 @@ export type {
   ProductionCompany,
   ProductionCountry,
   SpokenLanguage,
+  Video,
+  VideosResponse,
 } from "./types";

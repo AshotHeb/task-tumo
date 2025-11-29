@@ -80,6 +80,30 @@ export interface SpokenLanguage {
 }
 
 /**
+ * Video entity from TMDb API
+ */
+export interface Video {
+  id: string;
+  iso_639_1: string;
+  iso_3166_1: string;
+  key: string;
+  name: string;
+  official: boolean;
+  published_at: string;
+  site: string;
+  size: number;
+  type: string;
+}
+
+/**
+ * Videos response from TMDb API
+ */
+export interface VideosResponse {
+  id: number;
+  results: Video[];
+}
+
+/**
  * Full movie details from TMDb API (includes additional fields)
  */
 export interface MovieDetails extends Movie {
@@ -100,6 +124,7 @@ export interface MovieDetails extends Movie {
     poster_path: string | null;
     backdrop_path: string | null;
   } | null;
+  videos?: VideosResponse;
 }
 
 
