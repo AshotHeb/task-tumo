@@ -1,8 +1,10 @@
 .header {
+  position: sticky;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
   background-color: var(--color-sidebar-bg);
-  box-shadow: 0 2px 4px var(--color-header-shadow);
+  box-shadow: 0 4px 6px -1px var(--color-header-shadow),
+    0 2px 4px -1px var(--color-header-shadow);
 }

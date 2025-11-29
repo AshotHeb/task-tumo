@@ -1,8 +1,12 @@
 <template>
-  <div class="home"></div>
+  <div class="home">
+    <TopSection />
+  </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { TopSection } from "@/containers/home/movies/top-section";
+</script>
 
 <style scoped lang="scss">
 @import "./styles.scss";
