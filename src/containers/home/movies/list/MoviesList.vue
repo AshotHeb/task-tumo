@@ -4,10 +4,29 @@
       v-if="isLoading && displayMovies.length === 0"
       class="movies-list__loading"
     >
-      Loading movies...
+      <Loader size="lg" />
     </div>
     <div v-else-if="displayMovies.length === 0" class="movies-list__empty">
-      No movies found
+      <div class="movies-list__empty-content">
+        <Text size="lg" weight="semibold" class="movies-list__empty-title">
+          No movies found
+        </Text>
+        <Text size="sm" class="movies-list__empty-description">
+          {{
+            search.trim()
+              ? `No results found for "${search}"`
+              : "Try adjusting your search or filters"
+          }}
+        </Text>
+        <button
+          v-if="search.trim()"
+          type="button"
+          class="movies-list__reset-button"
+          @click="handleResetFilters"
+        >
+          Clear search
+        </button>
+      </div>
     </div>
     <template v-else>
       <ul class="movies-list__grid">
@@ -36,6 +55,7 @@ import { useMoviesStore } from "@/stores/movies";
 import { MovieItem } from "./movie-item";
 import { useInfiniteScroll } from "@/shared/composables/use-infinite-scroll";
 import { Loader } from "@/shared/components/atoms/loader";
+import { Text } from "@/shared/components/atoms/text";
 
 const moviesStore = useMoviesStore();
 const {
@@ -50,7 +70,7 @@ const {
   searchedTotalPages,
 } = storeToRefs(moviesStore);
 
-const { fetchMovies, fetchSearchedMovies } = moviesStore;
+const { fetchMovies, fetchSearchedMovies, setSearch } = moviesStore;
 
 const sentinelRef = ref<HTMLElement | null>(null);
 
@@ -91,6 +111,10 @@ const loadMore = async (): Promise<void> => {
     const nextPage = currentPage.value + 1;
     await fetchMovies(nextPage, true);
   }
+};
+
+const handleResetFilters = (): void => {
+  setSearch("");
 };
 
 useInfiniteScroll({
