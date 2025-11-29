@@ -2,10 +2,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import type { FavoritesState, FavoritesGetters } from "./types";
 import type { Movie } from "@/api/entities/movies/types";
-import {
-  saveFavoritesToStorage,
-  loadFavoritesFromStorage,
-} from "./utils";
+import { saveFavoritesToStorage, loadFavoritesFromStorage } from "./utils";
 
 export const useFavoritesStore = defineStore("favorites", () => {
   // State
@@ -32,6 +29,11 @@ export const useFavoritesStore = defineStore("favorites", () => {
 
   const favoritesList = computed<FavoritesGetters["favoritesList"]>(() => {
     return favorites.value;
+  });
+
+  const favoritesArray = computed<FavoritesGetters["favoritesArray"]>(() => {
+    // Convert Record<number, Movie> to Movie[]
+    return Object.values(favorites.value);
   });
 
   // Actions
@@ -70,6 +72,7 @@ export const useFavoritesStore = defineStore("favorites", () => {
     isFavorite,
     getFavorite,
     favoritesList,
+    favoritesArray,
     // Actions
     addFavorite,
     removeFavorite,
@@ -85,4 +88,3 @@ export type {
   FavoritesGetters,
   FavoritesActions,
 } from "./types";
-

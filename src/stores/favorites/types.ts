@@ -15,6 +15,7 @@ export interface FavoritesGetters {
   isFavorite: (id: number) => boolean;
   getFavorite: (id: number) => Movie | undefined;
   favoritesList: Record<number, Movie>;
+  favoritesArray: Movie[];
 }
 
 /**
