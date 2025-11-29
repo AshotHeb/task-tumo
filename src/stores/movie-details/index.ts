@@ -3,9 +3,10 @@ import { ref, computed } from "vue";
 import type { MovieDetailsState, MovieDetailsGetters } from "./types";
 import { getMovieById, getMovieVideos } from "@/api/entities/movies";
 import type { MovieDetails } from "@/api/entities/movies/types";
+import { loadMovieFromStorage, saveMovieToStorage } from "./utils";
 
 export const useMovieDetailsStore = defineStore("movie-details", () => {
-  // State
+  // State - Initialize with movies from localStorage
   const cachedMovies = ref<MovieDetailsState["cachedMovies"]>({});
   const isFetchMovieDetailsLoading =
     ref<MovieDetailsState["isFetchMovieDetailsLoading"]>(false);
@@ -30,6 +31,8 @@ export const useMovieDetailsStore = defineStore("movie-details", () => {
   // Actions
   function cacheMovie(movie: MovieDetails): void {
     cachedMovies.value[movie.id] = movie;
+    // Save to localStorage
+    saveMovieToStorage(movie.id, movie);
   }
 
   function setCurrentMovieId(id: number | null): void {
@@ -37,8 +40,16 @@ export const useMovieDetailsStore = defineStore("movie-details", () => {
   }
 
   async function fetchMovieDetails(id: number): Promise<void> {
-    // Check if movie is already cached
+    // Check if movie is already cached in memory
     if (cachedMovies.value[id]) {
+      return;
+    }
+
+    // Check if movie exists in localStorage
+    const storedMovie = loadMovieFromStorage(id);
+    if (storedMovie) {
+      // Set in store from localStorage
+      cachedMovies.value[id] = storedMovie;
       return;
     }
 
@@ -63,6 +74,7 @@ export const useMovieDetailsStore = defineStore("movie-details", () => {
         movieDetails.videos = videosResponse.data;
       }
 
+      // Cache movie (this will also save to localStorage)
       cacheMovie(movieDetails);
     } catch (error) {
       console.error("Error fetching movie details:", error);
