@@ -9,6 +9,7 @@ export const useMovieDetailsStore = defineStore("movie-details", () => {
   const cachedMovies = ref<MovieDetailsState["cachedMovies"]>({});
   const isFetchMovieDetailsLoading =
     ref<MovieDetailsState["isFetchMovieDetailsLoading"]>(false);
+  const currentMovieId = ref<MovieDetailsState["currentMovieId"]>(null);
 
   // Getters
   const getCachedMovie = computed<MovieDetailsGetters["getCachedMovie"]>(
@@ -19,9 +20,20 @@ export const useMovieDetailsStore = defineStore("movie-details", () => {
     () => (id: number) => id in cachedMovies.value
   );
 
+  const currentMovie = computed<MovieDetailsGetters["currentMovie"]>(() => {
+    if (currentMovieId.value === null) {
+      return undefined;
+    }
+    return cachedMovies.value[currentMovieId.value];
+  });
+
   // Actions
   function cacheMovie(movie: MovieDetails): void {
     cachedMovies.value[movie.id] = movie;
+  }
+
+  function setCurrentMovieId(id: number | null): void {
+    currentMovieId.value = id;
   }
 
   async function fetchMovieDetails(id: number): Promise<void> {
@@ -64,12 +76,15 @@ export const useMovieDetailsStore = defineStore("movie-details", () => {
     // State
     cachedMovies,
     isFetchMovieDetailsLoading,
+    currentMovieId,
     // Getters
     getCachedMovie,
     isMovieCached,
+    currentMovie,
     // Actions
     fetchMovieDetails,
     cacheMovie,
+    setCurrentMovieId,
   };
 });
 

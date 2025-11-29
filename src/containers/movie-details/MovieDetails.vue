@@ -153,6 +153,7 @@
             </div>
           </div>
         </div>
+        <Trailers />
       </div>
     </div>
     <div v-else class="movie-details__error">
@@ -171,23 +172,22 @@ import { useFavoritesStore } from "@/stores/favorites";
 import { Loader } from "@/shared/components/atoms/loader";
 import { Text } from "@/shared/components/atoms/text";
 import { Favorite } from "@/shared/components/atoms/favorite";
+import { Trailers } from "./trailers";
 
 const route = useRoute();
 const router = useRouter();
 const movieDetailsStore = useMovieDetailsStore();
 const favoritesStore = useFavoritesStore();
-const { cachedMovies, isFetchMovieDetailsLoading } =
+const { currentMovie, isFetchMovieDetailsLoading } =
   storeToRefs(movieDetailsStore);
-const { fetchMovieDetails } = movieDetailsStore;
+const { fetchMovieDetails, setCurrentMovieId } = movieDetailsStore;
 
 const movieId = computed(() => {
   const id = route.params.id;
   return typeof id === "string" ? parseInt(id, 10) : Number(id);
 });
 
-const movie = computed(() => {
-  return cachedMovies.value[movieId.value];
-});
+const movie = computed(() => currentMovie.value);
 
 const isLoading = computed(() => {
   return isFetchMovieDetailsLoading.value || (!movie.value && movieId.value);
@@ -223,12 +223,15 @@ const handleBack = (): void => {
   router.push("/");
 };
 
-// Fetch movie details when component mounts or movieId changes
+// Set currentMovieId from route params and fetch movie details
 watch(
   movieId,
   async (newId) => {
     if (newId && !isNaN(newId)) {
+      setCurrentMovieId(newId);
       await fetchMovieDetails(newId);
+    } else {
+      setCurrentMovieId(null);
     }
   },
   { immediate: true }
@@ -236,7 +239,10 @@ watch(
 
 onMounted(async () => {
   if (movieId.value && !isNaN(movieId.value)) {
+    setCurrentMovieId(movieId.value);
     await fetchMovieDetails(movieId.value);
+  } else {
+    setCurrentMovieId(null);
   }
 });
 </script>

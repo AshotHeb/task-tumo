@@ -12,6 +12,10 @@ export interface MovieDetailsState {
    * Loading state for fetching movie details
    */
   isFetchMovieDetailsLoading: boolean;
+  /**
+   * Current movie ID from URL params
+   */
+  currentMovieId: number | null;
 }
 
 /**
@@ -26,6 +30,10 @@ export interface MovieDetailsGetters {
    * Check if movie is cached
    */
   isMovieCached: (id: number) => boolean;
+  /**
+   * Current movie based on currentMovieId
+   */
+  currentMovie: MovieDetails | undefined;
 }
 
 /**
@@ -40,6 +48,10 @@ export interface MovieDetailsActions {
    * Cache movie details
    */
   cacheMovie: (movie: MovieDetails) => void;
+  /**
+   * Set current movie ID from URL params
+   */
+  setCurrentMovieId: (id: number | null) => void;
 }
 
 /**
@@ -48,4 +60,3 @@ export interface MovieDetailsActions {
 export type MovieDetailsStore = MovieDetailsState &
   MovieDetailsGetters &
   MovieDetailsActions;
-
