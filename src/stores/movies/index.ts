@@ -4,6 +4,8 @@ import type { MoviesState, MoviesGetters } from "./types";
 import {
   getSearchFromUrl,
   updateSearchInUrl,
+  getGenresFromUrl,
+  updateGenresInUrl,
   loadGenresFromStorage,
   saveGenresToStorage,
   loadMoviesListingsFromStorage,
@@ -19,7 +21,7 @@ export const useMoviesStore = defineStore("movies", () => {
   // State
   const filterOptions = ref<MoviesState["filterOptions"]>({
     search: getSearchFromUrl(),
-    selectedGenres: [],
+    selectedGenres: getGenresFromUrl(),
   });
   const movies = ref<MoviesState["movies"]>([]);
   const searchedMovies = ref<MoviesState["searchedMovies"]>([]);
@@ -84,6 +86,7 @@ export const useMoviesStore = defineStore("movies", () => {
 
   function setSelectedGenres(genreIds: number[]): void {
     filterOptions.value.selectedGenres = genreIds;
+    updateGenresInUrl(genreIds);
   }
 
   async function fetchMovies(

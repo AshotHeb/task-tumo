@@ -1,6 +1,7 @@
 import type { Genre, Movie } from "@/api/entities/movies/types";
 
 export const SEARCH_QUERY_PARAM = "search";
+export const GENRES_QUERY_PARAM = "genres";
 
 /**
  * localStorage key for cached genres
@@ -38,6 +39,54 @@ export function updateSearchInUrl(search: string): void {
     url.searchParams.set(SEARCH_QUERY_PARAM, search);
   } else {
     url.searchParams.delete(SEARCH_QUERY_PARAM);
+  }
+
+  // Update URL without page reload
+  window.history.replaceState({}, "", url.toString());
+}
+
+/**
+ * Get genre IDs from URL query parameters
+ * @returns Array of genre IDs parsed from comma-separated string
+ */
+export function getGenresFromUrl(): number[] {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const genresParam = urlParams.get(GENRES_QUERY_PARAM);
+  
+  if (!genresParam) {
+    return [];
+  }
+
+  // Parse comma-separated genre IDs
+  const genreIds = genresParam
+    .split(",")
+    .map((id) => parseInt(id.trim(), 10))
+    .filter((id) => !isNaN(id) && id > 0);
+
+  return genreIds;
+}
+
+/**
+ * Update genre IDs in URL query parameters
+ * @param genreIds - Array of genre IDs to set in URL
+ */
+export function updateGenresInUrl(genreIds: number[]): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+
+  if (genreIds.length > 0) {
+    // Convert array to comma-separated string
+    const genresString = genreIds.join(",");
+    url.searchParams.set(GENRES_QUERY_PARAM, genresString);
+  } else {
+    url.searchParams.delete(GENRES_QUERY_PARAM);
   }
 
   // Update URL without page reload

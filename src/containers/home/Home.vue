@@ -69,7 +69,12 @@ const debouncedSearch = debounce(() => {
 onMounted(async () => {
   isMounted.value = true;
   await fetchGenres();
-  if (movies.value.length === 0) {
+  
+  // If there are active filters (search or genres from URL), perform search
+  // Otherwise, fetch popular movies if movies array is empty
+  if (hasActiveFilters.value) {
+    await performSearch();
+  } else if (movies.value.length === 0) {
     await fetchMovies(1, false);
   }
 
