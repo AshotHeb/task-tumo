@@ -27,6 +27,15 @@
   --color-input-focus-ring: rgba(59, 130, 246, 0.2);
   --color-input-disabled-bg: #f3f4f6;
   --color-input-clear-hover: rgba(0, 0, 0, 0.05);
+
+  // Movie item colors
+  --color-movie-title: #1f2937;
+  --color-movie-text: #4b5563;
+  --color-movie-meta: #6b7280;
+
+  // Tooltip colors
+  --color-tooltip-bg: #1f2937;
+  --color-tooltip-text: #9ca3af;
 }
 
 // CSS Variables for Dark Theme
@@ -53,6 +62,20 @@
   --color-input-focus-ring: rgba(96, 165, 250, 0.2);
   --color-input-disabled-bg: #111827;
   --color-input-clear-hover: rgba(255, 255, 255, 0.1);
+
+  // Movie item colors
+  --color-movie-title: #f9fafb;
+  --color-movie-text: #d1d5db;
+  --color-movie-meta: #9ca3af;
+
+  // Text colors
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+
+  // Tooltip colors
+  --color-tooltip-bg: #1f2937;
+  --color-tooltip-text: #d1d5db;
 }
 
 // Global font family
@@ -61,7 +84,7 @@
 }
 
 .app {
-  // Add global app styles here if needed
+  background: var(--base-background);
 }
 
 body {

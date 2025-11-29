@@ -1,3 +1,5 @@
+import type { Movie } from "@/api/entities/movies/types";
+
 /**
  * Movies filter options
  */
@@ -10,7 +12,14 @@ export interface MoviesFilterOptions {
  */
 export interface MoviesState {
   filterOptions: MoviesFilterOptions;
+  movies: Movie[];
+  searchedMovies: Movie[];
   isFetchMoviesLoading: boolean;
+  isFetchSearchedMoviesLoading: boolean;
+  currentPage: number;
+  searchedCurrentPage: number;
+  totalPages: number;
+  searchedTotalPages: number;
 }
 
 /**
@@ -25,11 +34,17 @@ export interface MoviesGetters {
  */
 export interface MoviesActions {
   setSearch: (search: string) => void;
-  setIsFetchMoviesLoading: (loading: boolean) => void;
+  fetchMovies: (page?: number, append?: boolean) => Promise<void>;
+  fetchSearchedMovies: (
+    query: string,
+    page?: number,
+    append?: boolean
+  ) => Promise<void>;
+  resetMovies: () => void;
+  resetSearchedMovies: () => void;
 }
 
 /**
  * Movies store type
  */
 export type MoviesStore = MoviesState & MoviesGetters & MoviesActions;
-

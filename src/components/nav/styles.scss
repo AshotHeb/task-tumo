@@ -24,11 +24,6 @@
       background-color: var(--color-nav-item-hover);
     }
 
-    &:focus {
-      outline: 2px solid var(--color-nav-item-active);
-      outline-offset: 2px;
-    }
-
     &--active {
       color: var(--color-nav-item-active);
       background-color: var(--color-nav-item-active-bg);

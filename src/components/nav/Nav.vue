@@ -27,11 +27,15 @@ const navItems = [
 function navLinkClasses(path: string): string {
   const classes = ["nav__link"];
   if (path === "/") {
+    // Exact match for home page
     if (route.path === "/") {
       classes.push("nav__link--active");
     }
-  } else if (route.path.startsWith(path.split("/")[1])) {
-    classes.push("nav__link--active");
+  } else {
+    // Exact match or starts with path for other routes
+    if (route.path === path || route.path.startsWith(path + "/")) {
+      classes.push("nav__link--active");
+    }
   }
   return classes.join(" ");
 }
