@@ -2,4 +2,10 @@
   display: flex;
   width: 100%;
   padding: 24px 0;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.top-section__input {
+  flex: 1;
 }

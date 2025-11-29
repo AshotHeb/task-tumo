@@ -6,13 +6,21 @@
       placeholder="Search movies..."
       class="top-section__input"
     />
+    <Select
+      v-model="selectedFilters"
+      :options="mockOptions"
+      placeholder="Filter by..."
+      class="top-section__select"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { Input } from "@/shared/components/atoms/input";
+import { Select } from "@/shared/components/molecules/select";
+import type { SelectOption } from "@/shared/components/molecules/select";
 import { useMoviesStore } from "@/stores/movies";
 
 const moviesStore = useMoviesStore();
@@ -25,6 +33,20 @@ const searchValue = computed({
     setSearch(value);
   },
 });
+
+// Mock options for Select component
+const mockOptions: SelectOption[] = [
+  { value: "action", label: "Action" },
+  { value: "comedy", label: "Comedy" },
+  { value: "drama", label: "Drama" },
+  { value: "horror", label: "Horror" },
+  { value: "sci-fi", label: "Sci-Fi" },
+  { value: "thriller", label: "Thriller" },
+  { value: "romance", label: "Romance" },
+  { value: "adventure", label: "Adventure" },
+];
+
+const selectedFilters = ref<string[]>([]);
 </script>
 
 <style scoped lang="scss">
