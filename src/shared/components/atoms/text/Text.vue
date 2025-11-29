@@ -37,3 +37,4 @@ const filteredAttrs = computed(() =>
   filterClassFromAttrs(attrs as Record<string, unknown>)
 );
 </script>
+

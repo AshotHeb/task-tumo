@@ -7,3 +7,4 @@ export const USERS_API_URLS = {
    */
   GET_USERS: "https://jsonplaceholder.typicode.com/users",
 } as const;
+

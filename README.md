@@ -228,3 +228,4 @@ When contributing to this project, please follow the guidelines in `.cursor/rule
 ## License
 
 MIT
+

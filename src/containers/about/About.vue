@@ -16,3 +16,4 @@ import { Heading } from "@/shared/components/atoms/heading";
 @import "./styles.scss";
 </style>
 
+

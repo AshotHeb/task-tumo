@@ -8,3 +8,4 @@ export const TASKS_API_URLS = {
   GET_TASKS: "https://jsonplaceholder.typicode.com/todos",
 } as const;
 
+

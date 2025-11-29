@@ -82,3 +82,4 @@ export function filterClassFromAttrs(
   const { class: _, ...rest } = attrs;
   return rest;
 }
+

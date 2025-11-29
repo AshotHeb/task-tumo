@@ -32,3 +32,4 @@ export function getVariantConfig(variant: HeadingVariant): VariantConfig {
   return VARIANT_CONFIG[variant];
 }
 
+

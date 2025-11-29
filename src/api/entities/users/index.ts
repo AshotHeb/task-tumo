@@ -13,3 +13,4 @@ export async function getUsers(): Promise<AxiosResponse<ApiResponse<User[]>>> {
 }
 
 export type { User } from "./types";
+

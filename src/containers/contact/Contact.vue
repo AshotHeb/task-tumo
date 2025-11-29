@@ -15,3 +15,4 @@ import { Heading } from "@/shared/components/atoms/heading";
 <style scoped lang="scss">
 @import "./styles.scss";
 </style>
+
