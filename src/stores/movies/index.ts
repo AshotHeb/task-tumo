@@ -1,7 +1,12 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import type { MoviesState, MoviesGetters } from "./types";
-import { getSearchFromUrl, updateSearchInUrl } from "./utils";
+import {
+  getSearchFromUrl,
+  updateSearchInUrl,
+  loadGenresFromStorage,
+  saveGenresToStorage,
+} from "./utils";
 import {
   getPopularMovies,
   searchMovies,
@@ -16,7 +21,8 @@ export const useMoviesStore = defineStore("movies", () => {
   });
   const movies = ref<MoviesState["movies"]>([]);
   const searchedMovies = ref<MoviesState["searchedMovies"]>([]);
-  const genres = ref<MoviesState["genres"]>([]);
+  // Initialize genres from localStorage
+  const genres = ref<MoviesState["genres"]>(loadGenresFromStorage());
   const isFetchMoviesLoading = ref<MoviesState["isFetchMoviesLoading"]>(false);
   const isFetchSearchedMoviesLoading =
     ref<MoviesState["isFetchSearchedMoviesLoading"]>(false);
@@ -183,9 +189,18 @@ export const useMoviesStore = defineStore("movies", () => {
       return;
     }
 
+    // Check if genres exist in localStorage
+    const storedGenres = loadGenresFromStorage();
+    if (storedGenres.length > 0) {
+      genres.value = storedGenres;
+      return;
+    }
+
     try {
       const response = await getGenreList({ language: "en-US" });
       genres.value = response.data.genres;
+      // Save to localStorage after fetching
+      saveGenresToStorage(genres.value);
     } catch (error) {
       console.error("Failed to fetch genres:", error);
       throw error;
