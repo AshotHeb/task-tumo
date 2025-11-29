@@ -63,6 +63,26 @@
   }
 }
 
+.select-trigger__badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: #ffffff;
+  background-color: #3b82f6;
+  border-radius: 9px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  font-family: "Montserrat", sans-serif;
+}
+
 .select-popover {
   position: absolute;
   top: calc(100% + 4px);

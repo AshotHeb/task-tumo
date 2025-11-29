@@ -12,6 +12,9 @@
       @keydown="handleTriggerKeydown"
     >
       <Filter :class="'select-trigger__icon'" :size="16" />
+      <span v-if="selectedCount > 0" class="select-trigger__badge">
+        {{ selectedCount }}
+      </span>
     </button>
 
     <Transition name="select-popover">
@@ -106,6 +109,8 @@ const isOpen = ref(false);
 
 const selectedValues = computed(() => props.modelValue || []);
 
+const selectedCount = computed(() => selectedValues.value.length);
+
 const filteredOptions = computed(() => {
   return props.options;
 });
@@ -128,7 +133,9 @@ const contentStyles = computed(() => {
 const isSelected = (value: string): boolean => {
   // When popover is open, always use pendingValues (even if empty)
   // When popover is closed, use selectedValues
-  const valuesToCheck = isOpen.value ? pendingValues.value : selectedValues.value;
+  const valuesToCheck = isOpen.value
+    ? pendingValues.value
+    : selectedValues.value;
   return valuesToCheck.includes(value);
 };
 
