@@ -19,6 +19,7 @@ alwaysApply: true
 ```
 {component-name}/
 ├── {ComponentName}.vue    # Main component file (PascalCase)
+├── {ComponentName}.test.ts # Test file (required for shared components)
 ├── types.ts               # TypeScript type definitions
 ├── utils.ts               # Utility functions (if needed)
 ├── styles.scss            # Component styles (scoped)
@@ -370,6 +371,25 @@ const { config, titleTag } = useHeading(computed(() => props.variant));
 - Document complex logic with comments
 - Keep components small and composable
 
+### Testing
+
+- **All shared components** (components in `src/shared/components/`) **must have test files**
+- Test file should be named `{ComponentName}.test.ts` in the component folder
+- Test all props, slots, events, and computed properties
+- Test class generation and attribute forwarding
+- Use Vitest and Vue Test Utils for component testing
+
+**Example:**
+
+```
+text/
+├── Text.vue
+├── Text.test.ts    # ✅ Required for shared components
+├── types.ts
+├── utils.ts
+└── index.ts
+```
+
 ### Code Organization
 
 - Group related code together (state, computed, methods)
@@ -492,6 +512,28 @@ heading/
         ├── types.ts
         ├── index.ts
         └── utils.ts
+```
+
+### ❌ Don't Skip Tests for Shared Components
+
+```
+<!-- BAD -->
+text/
+├── Text.vue
+├── types.ts
+└── index.ts
+# ❌ Missing Text.test.ts
+```
+
+**Instead, always add tests:**
+
+```
+<!-- GOOD -->
+text/
+├── Text.vue
+├── Text.test.ts    # ✅ Required
+├── types.ts
+└── index.ts
 ```
 
 ## Component Examples
