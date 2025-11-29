@@ -9,6 +9,7 @@
 import { onMounted, watch, onBeforeUnmount, ref } from "vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
+import debounce from "lodash.debounce";
 import { TopSection } from "@/containers/home/movies/top-section";
 import { MoviesList } from "@/containers/home/movies/list";
 import { useMoviesStore } from "@/stores/movies";
@@ -27,7 +28,6 @@ useScrollPosition({
 });
 
 const isMounted = ref(false);
-let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 let stopSearchWatcher: (() => void) | null = null;
 let stopGenresWatcher: (() => void) | null = null;
 
@@ -58,17 +58,12 @@ async function performSearch(): Promise<void> {
   }
 }
 
-function debounceSearch(): void {
-  if (searchDebounceTimer) {
-    clearTimeout(searchDebounceTimer);
+// Create debounced search function using lodash.debounce
+const debouncedSearch = debounce(() => {
+  if (isMounted.value) {
+    performSearch();
   }
-
-  searchDebounceTimer = setTimeout(async () => {
-    if (isMounted.value) {
-      await performSearch();
-    }
-  }, 300);
-}
+}, 300);
 
 // Initial load: fetch popular movies only if movies array is empty
 onMounted(async () => {
@@ -82,7 +77,7 @@ onMounted(async () => {
   stopSearchWatcher = watch(
     search,
     () => {
-      debounceSearch();
+      debouncedSearch();
     },
     { immediate: false }
   );
@@ -100,10 +95,8 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   isMounted.value = false;
 
-  if (searchDebounceTimer) {
-    clearTimeout(searchDebounceTimer);
-    searchDebounceTimer = null;
-  }
+  // Cancel any pending debounced calls
+  debouncedSearch.cancel();
 
   if (stopSearchWatcher) {
     stopSearchWatcher();
