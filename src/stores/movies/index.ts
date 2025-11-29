@@ -6,6 +6,8 @@ import {
   updateSearchInUrl,
   loadGenresFromStorage,
   saveGenresToStorage,
+  loadMoviesListingsFromStorage,
+  saveMoviesListingsToStorage,
 } from "./utils";
 import {
   getPopularMovies,
@@ -92,6 +94,24 @@ export const useMoviesStore = defineStore("movies", () => {
       return;
     }
 
+    // Check if page exists in localStorage cache
+    const cachedResponse = loadMoviesListingsFromStorage(page);
+    if (cachedResponse) {
+      // Use cached movies and page info
+      if (append) {
+        // Append to existing movies for infinite loading
+        movies.value = [...movies.value, ...cachedResponse.movies];
+      } else {
+        // Replace movies for new fetch
+        movies.value = cachedResponse.movies;
+      }
+
+      // Set page info from cache
+      currentPage.value = cachedResponse.page;
+      totalPages.value = cachedResponse.total_pages;
+      return;
+    }
+
     try {
       isFetchMoviesLoading.value = true;
 
@@ -108,6 +128,9 @@ export const useMoviesStore = defineStore("movies", () => {
 
       currentPage.value = responsePage;
       totalPages.value = total_pages;
+
+      // Cache the movies and page info for this page
+      saveMoviesListingsToStorage(page, results, responsePage, total_pages);
     } catch (error) {
       console.error("Failed to fetch movies:", error);
       throw error;
