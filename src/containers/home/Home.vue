@@ -7,14 +7,22 @@
 
 <script setup lang="ts">
 import { onMounted, watch, onBeforeUnmount } from "vue";
+import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { TopSection } from "@/containers/home/movies/top-section";
 import { MoviesList } from "@/containers/home/movies/list";
 import { useMoviesStore } from "@/stores/movies";
+import { useScrollPosition } from "@/shared/composables/use-scroll-position";
 
+const route = useRoute();
 const moviesStore = useMoviesStore();
 const { movies, search } = storeToRefs(moviesStore);
 const { fetchMovies, fetchSearchedMovies, resetSearchedMovies } = moviesStore;
+
+// Save and restore scroll position
+useScrollPosition({
+  key: route.path,
+});
 
 let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 

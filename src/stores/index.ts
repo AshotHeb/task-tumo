@@ -10,3 +10,11 @@ export type {
   MoviesActions,
   MoviesFilterOptions,
 } from "./movies";
+
+export { useScrollPositionStore } from "./scroll-position";
+export type {
+  ScrollPositionStore,
+  ScrollPositionState,
+  ScrollPositionGetters,
+  ScrollPositionActions,
+} from "./scroll-position";
