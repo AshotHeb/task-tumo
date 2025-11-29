@@ -1,6 +1,7 @@
 import axios, { type AxiosResponse } from "axios";
 import type {
   Movie,
+  MovieDetails,
   MoviesResponse,
   SearchMoviesParams,
   PopularMoviesParams,
@@ -49,15 +50,20 @@ export async function searchMovies(
 export async function getMovieById(
   id: number,
   params?: { language?: string }
-): Promise<AxiosResponse<Movie>> {
+): Promise<AxiosResponse<MovieDetails>> {
   const url = MOVIES_API_URLS.getMovieById(id, params);
   // TMDb API returns data directly, not wrapped in ApiResponse
-  return axios.get<Movie>(url);
+  return axios.get<MovieDetails>(url);
 }
 
 export type {
   Movie,
+  MovieDetails,
   MoviesResponse,
   SearchMoviesParams,
   PopularMoviesParams,
+  Genre,
+  ProductionCompany,
+  ProductionCountry,
+  SpokenLanguage,
 } from "./types";

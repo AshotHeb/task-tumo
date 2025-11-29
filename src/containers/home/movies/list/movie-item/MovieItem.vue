@@ -1,5 +1,5 @@
 <template>
-  <li class="movie-item">
+  <li class="movie-item" @click="handleClick">
     <div class="movie-item__poster">
       <img
         v-if="movie.poster_path"
@@ -32,16 +32,22 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
 import type { MovieItemProps } from "./types";
 import { Text } from "@/shared/components/atoms/text";
 import { Tooltip } from "@/shared/components/atoms/tooltip";
 
-defineProps<MovieItemProps>();
+const props = defineProps<MovieItemProps>();
+const router = useRouter();
 
 function formatDate(dateString: string): string {
   if (!dateString) return "";
   const date = new Date(dateString);
   return date.getFullYear().toString();
+}
+
+function handleClick(): void {
+  router.push(`/movie/${props.movie.id}`);
 }
 </script>
 
