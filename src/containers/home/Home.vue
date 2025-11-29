@@ -17,7 +17,8 @@ import { useScrollPosition } from "@/shared/composables/use-scroll-position";
 const route = useRoute();
 const moviesStore = useMoviesStore();
 const { movies, search } = storeToRefs(moviesStore);
-const { fetchMovies, fetchSearchedMovies, resetSearchedMovies } = moviesStore;
+const { fetchMovies, fetchSearchedMovies, resetSearchedMovies, fetchGenres } =
+  moviesStore;
 
 // Save and restore scroll position
 useScrollPosition({
@@ -52,6 +53,7 @@ watch(
 
 // Initial load: fetch popular movies only if movies array is empty
 onMounted(async () => {
+  await fetchGenres();
   if (movies.value.length === 0) {
     await fetchMovies(1, false);
   }

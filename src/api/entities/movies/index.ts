@@ -5,6 +5,7 @@ import type {
   SearchMoviesParams,
   PopularMoviesParams,
   VideosResponse,
+  GenresResponse,
 } from "./types";
 import { MOVIES_API_URLS } from "./consts";
 
@@ -71,6 +72,19 @@ export async function getMovieVideos(
   return axios.get<VideosResponse>(url);
 }
 
+/**
+ * Get movie genres list from TMDb API
+ * @param params - Query parameters (language)
+ * @returns Promise with genres response
+ */
+export async function getGenreList(params?: {
+  language?: string;
+}): Promise<AxiosResponse<GenresResponse>> {
+  const url = MOVIES_API_URLS.getGenreList(params);
+  // TMDb API returns data directly, not wrapped in ApiResponse
+  return axios.get<GenresResponse>(url);
+}
+
 export type {
   Movie,
   MovieDetails,
@@ -78,6 +92,7 @@ export type {
   SearchMoviesParams,
   PopularMoviesParams,
   Genre,
+  GenresResponse,
   ProductionCompany,
   ProductionCountry,
   SpokenLanguage,

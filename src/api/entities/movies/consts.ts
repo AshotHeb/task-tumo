@@ -94,4 +94,16 @@ export const MOVIES_API_URLS = {
     });
     return `${TMDB_API_BASE_URL}/movie/${id}/videos?${queryString}`;
   },
+
+  /**
+   * Get movie genres list
+   * @param params - Query parameters (language)
+   * @returns Full URL with query parameters
+   */
+  getGenreList: (params?: { language?: string }): string => {
+    const queryString = buildQueryParams({
+      language: params?.language || "en-US",
+    });
+    return `${TMDB_API_BASE_URL}/genre/movie/list?${queryString}`;
+  },
 } as const;

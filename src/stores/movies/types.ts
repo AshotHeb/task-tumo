@@ -1,4 +1,4 @@
-import type { Movie } from "@/api/entities/movies/types";
+import type { Movie, Genre } from "@/api/entities/movies/types";
 
 /**
  * Movies filter options
@@ -14,6 +14,7 @@ export interface MoviesState {
   filterOptions: MoviesFilterOptions;
   movies: Movie[];
   searchedMovies: Movie[];
+  genres: Genre[];
   isFetchMoviesLoading: boolean;
   isFetchSearchedMoviesLoading: boolean;
   currentPage: number;
@@ -40,6 +41,7 @@ export interface MoviesActions {
     page?: number,
     append?: boolean
   ) => Promise<void>;
+  fetchGenres: () => Promise<void>;
   resetMovies: () => void;
   resetSearchedMovies: () => void;
 }

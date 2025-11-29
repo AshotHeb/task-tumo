@@ -2,7 +2,11 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import type { MoviesState, MoviesGetters } from "./types";
 import { getSearchFromUrl, updateSearchInUrl } from "./utils";
-import { getPopularMovies, searchMovies } from "@/api/entities/movies";
+import {
+  getPopularMovies,
+  searchMovies,
+  getGenreList,
+} from "@/api/entities/movies";
 
 export const useMoviesStore = defineStore("movies", () => {
   // State
@@ -11,6 +15,7 @@ export const useMoviesStore = defineStore("movies", () => {
   });
   const movies = ref<MoviesState["movies"]>([]);
   const searchedMovies = ref<MoviesState["searchedMovies"]>([]);
+  const genres = ref<MoviesState["genres"]>([]);
   const isFetchMoviesLoading = ref<MoviesState["isFetchMoviesLoading"]>(false);
   const isFetchSearchedMoviesLoading =
     ref<MoviesState["isFetchSearchedMoviesLoading"]>(false);
@@ -118,11 +123,27 @@ export const useMoviesStore = defineStore("movies", () => {
     searchedTotalPages.value = 0;
   }
 
+  async function fetchGenres(): Promise<void> {
+    // Only fetch if genres list is empty
+    if (genres.value.length > 0) {
+      return;
+    }
+
+    try {
+      const response = await getGenreList({ language: "en-US" });
+      genres.value = response.data.genres;
+    } catch (error) {
+      console.error("Failed to fetch genres:", error);
+      throw error;
+    }
+  }
+
   return {
     // State
     filterOptions,
     movies,
     searchedMovies,
+    genres,
     isFetchMoviesLoading,
     isFetchSearchedMoviesLoading,
     currentPage,
@@ -135,6 +156,7 @@ export const useMoviesStore = defineStore("movies", () => {
     setSearch,
     fetchMovies,
     fetchSearchedMovies,
+    fetchGenres,
     resetMovies,
     resetSearchedMovies,
   };

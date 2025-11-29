@@ -53,6 +53,13 @@ export interface Genre {
 }
 
 /**
+ * Genres list response from TMDb API
+ */
+export interface GenresResponse {
+  genres: Genre[];
+}
+
+/**
  * Production company entity from TMDb API
  */
 export interface ProductionCompany {
@@ -126,5 +133,3 @@ export interface MovieDetails extends Movie {
   } | null;
   videos?: VideosResponse;
 }
-
-
