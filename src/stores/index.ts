@@ -26,3 +26,12 @@ export type {
   FavoritesGetters,
   FavoritesActions,
 } from "./favorites";
+
+export { useGlobalStore } from "./global";
+export type {
+  GlobalStore,
+  GlobalState,
+  GlobalGetters,
+  GlobalActions,
+  ActiveToast,
+} from "./global";

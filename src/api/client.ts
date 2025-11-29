@@ -1,5 +1,10 @@
-import axios, { type AxiosInstance, type AxiosResponse, type InternalAxiosRequestConfig } from "axios";
+import axios, {
+  type AxiosInstance,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig,
+} from "axios";
 import type { ApiResponse, ApiError } from "./types";
+import { showErrorToast } from "./utils";
 
 /**
  * Create axios instance with default configuration
@@ -43,11 +48,20 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     // Handle error responses
+    const errorMessage =
+      error.response?.data?.message ||
+      error.response?.data?.status_message ||
+      error.message ||
+      "An error occurred";
+
     const apiError: ApiError = {
-      message: error.response?.data?.message || error.message || "An error occurred",
+      message: errorMessage,
       status: error.response?.status,
       errors: error.response?.data?.errors,
     };
+
+    // Show error toast notification
+    showErrorToast(errorMessage);
 
     // Handle specific status codes
     if (error.response?.status === 401) {
@@ -62,4 +76,3 @@ apiClient.interceptors.response.use(
 );
 
 export default apiClient;
-

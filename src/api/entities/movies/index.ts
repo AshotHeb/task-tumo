@@ -1,4 +1,5 @@
-import axios, { type AxiosResponse } from "axios";
+import { type AxiosResponse } from "axios";
+import apiClient from "../../client";
 import type {
   MovieDetails,
   MoviesResponse,
@@ -22,7 +23,7 @@ export async function getPopularMovies(
     language: params?.language,
   });
   // TMDb API returns data directly, not wrapped in ApiResponse
-  return axios.get<MoviesResponse>(url);
+  return apiClient.get<MoviesResponse>(url);
 }
 
 /**
@@ -41,7 +42,7 @@ export async function searchMovies(
     language: params.language,
   });
   // TMDb API returns data directly, not wrapped in ApiResponse
-  return axios.get<MoviesResponse>(url);
+  return apiClient.get<MoviesResponse>(url);
 }
 
 /**
@@ -56,7 +57,7 @@ export async function getMovieById(
 ): Promise<AxiosResponse<MovieDetails>> {
   const url = MOVIES_API_URLS.getMovieById(id, params);
   // TMDb API returns data directly, not wrapped in ApiResponse
-  return axios.get<MovieDetails>(url);
+  return apiClient.get<MovieDetails>(url);
 }
 
 /**
@@ -71,7 +72,7 @@ export async function getMovieVideos(
 ): Promise<AxiosResponse<VideosResponse>> {
   const url = MOVIES_API_URLS.getMovieVideos(id, params);
   // TMDb API returns data directly, not wrapped in ApiResponse
-  return axios.get<VideosResponse>(url);
+  return apiClient.get<VideosResponse>(url);
 }
 
 /**
@@ -84,7 +85,7 @@ export async function getGenreList(params?: {
 }): Promise<AxiosResponse<GenresResponse>> {
   const url = MOVIES_API_URLS.getGenreList(params);
   // TMDb API returns data directly, not wrapped in ApiResponse
-  return axios.get<GenresResponse>(url);
+  return apiClient.get<GenresResponse>(url);
 }
 
 export type {
