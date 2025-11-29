@@ -1,5 +1,5 @@
 <template>
-  <div class="movies-grid">
+  <div class="movies-grid" ref="gridRef">
     <div v-if="isLoading" class="movies-grid__loading">
       <Loader size="lg" />
     </div>
@@ -42,6 +42,7 @@
         <Loader size="lg" />
       </div>
     </template>
+    <ScrollToTop :element-ref="gridRef" />
   </div>
 </template>
 
@@ -52,10 +53,12 @@ import { MovieItem } from "./movie-item";
 import { useInfiniteScroll } from "@/shared/composables/use-infinite-scroll";
 import { Loader } from "@/shared/components/atoms/loader";
 import { Text } from "@/shared/components/atoms/text";
+import { ScrollToTop } from "@/components/scroll-to-top";
 
 const props = defineProps<MoviesGridProps>();
 
 const sentinelRef = ref<HTMLElement | null>(null);
+const gridRef = ref<HTMLElement | null>(null);
 
 const canLoadMoreRef = computed(() => props.canLoadMore);
 
