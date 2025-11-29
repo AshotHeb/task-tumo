@@ -17,6 +17,12 @@
 
         <!-- Main Content -->
         <div class="movie-details__main">
+          <Favorite
+            v-if="movie"
+            :is-favorite="isFavorite"
+            :on-click="handleFavoriteClick"
+            class="movie-details__favorite"
+          />
           <!-- Poster -->
           <div class="movie-details__poster">
             <img
@@ -161,12 +167,15 @@ import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { ArrowLeft } from "lucide-vue-next";
 import { useMovieDetailsStore } from "@/stores/movie-details";
+import { useFavoritesStore } from "@/stores/favorites";
 import { Loader } from "@/shared/components/atoms/loader";
 import { Text } from "@/shared/components/atoms/text";
+import { Favorite } from "@/shared/components/atoms/favorite";
 
 const route = useRoute();
 const router = useRouter();
 const movieDetailsStore = useMovieDetailsStore();
+const favoritesStore = useFavoritesStore();
 const { cachedMovies, isFetchMovieDetailsLoading } =
   storeToRefs(movieDetailsStore);
 const { fetchMovieDetails } = movieDetailsStore;
@@ -183,6 +192,16 @@ const movie = computed(() => {
 const isLoading = computed(() => {
   return isFetchMovieDetailsLoading.value || (!movie.value && movieId.value);
 });
+
+const isFavorite = computed(() => {
+  return movie.value ? favoritesStore.isFavorite(movie.value.id) : false;
+});
+
+function handleFavoriteClick(): void {
+  if (movie.value) {
+    favoritesStore.toggleFavorite(movie.value);
+  }
+}
 
 const formatDate = (dateString: string): string => {
   if (!dateString) return "";

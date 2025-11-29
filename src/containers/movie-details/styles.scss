@@ -78,6 +78,7 @@
   }
 
   &__main {
+    position: relative;
     flex: 1;
     display: flex;
     gap: 3rem;
@@ -87,6 +88,13 @@
       flex-direction: column;
       gap: 2rem;
     }
+  }
+
+  &__favorite {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
   }
 
   &__poster {

@@ -1,5 +1,9 @@
 <template>
   <li class="movie-item" @click="handleClick">
+    <Favorite
+      :is-favorite="isFavorite"
+      :on-click="handleFavoriteClick"
+    />
     <div class="movie-item__poster">
       <img
         v-if="movie.poster_path"
@@ -32,13 +36,19 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import type { MovieItemProps } from "./types";
 import { Text } from "@/shared/components/atoms/text";
 import { Tooltip } from "@/shared/components/atoms/tooltip";
+import { Favorite } from "@/shared/components/atoms/favorite";
+import { useFavoritesStore } from "@/stores/favorites";
 
 const props = defineProps<MovieItemProps>();
 const router = useRouter();
+const favoritesStore = useFavoritesStore();
+
+const isFavorite = computed(() => favoritesStore.isFavorite(props.movie.id));
 
 function formatDate(dateString: string): string {
   if (!dateString) return "";
@@ -48,6 +58,10 @@ function formatDate(dateString: string): string {
 
 function handleClick(): void {
   router.push(`/movie/${props.movie.id}`);
+}
+
+function handleFavoriteClick(): void {
+  favoritesStore.toggleFavorite(props.movie);
 }
 </script>
 

@@ -1,0 +1,52 @@
+.favorite {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+
+  &:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+  }
+
+  &:focus {
+    outline: 2px solid var(--color-input-focus-border, #3b82f6);
+    outline-offset: 2px;
+  }
+
+  &--active {
+    background: rgba(239, 68, 68, 0.1);
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+  }
+}
+
+[data-theme="dark"] .favorite {
+  background: rgba(31, 41, 55, 0.9);
+
+  &:hover {
+    background: rgba(31, 41, 55, 1);
+  }
+
+  &--active {
+    background: rgba(239, 68, 68, 0.2);
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+  }
+}
+

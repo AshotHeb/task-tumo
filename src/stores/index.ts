@@ -18,3 +18,11 @@ export type {
   ScrollPositionGetters,
   ScrollPositionActions,
 } from "./scroll-position";
+
+export { useFavoritesStore } from "./favorites";
+export type {
+  FavoritesStore,
+  FavoritesState,
+  FavoritesGetters,
+  FavoritesActions,
+} from "./favorites";
