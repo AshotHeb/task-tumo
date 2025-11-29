@@ -5,6 +5,7 @@ import type { Movie, Genre } from "@/api/entities/movies/types";
  */
 export interface MoviesFilterOptions {
   search: string;
+  selectedGenres: number[];
 }
 
 /**
@@ -28,6 +29,11 @@ export interface MoviesState {
  */
 export interface MoviesGetters {
   search: string;
+  hasActiveFilters: boolean;
+  isLoading: boolean;
+  isLoadingMore: boolean;
+  displayMovies: Movie[];
+  canLoadMore: boolean;
 }
 
 /**
@@ -35,15 +41,19 @@ export interface MoviesGetters {
  */
 export interface MoviesActions {
   setSearch: (search: string) => void;
+  setSelectedGenres: (genreIds: number[]) => void;
   fetchMovies: (page?: number, append?: boolean) => Promise<void>;
   fetchSearchedMovies: (
     query: string,
     page?: number,
-    append?: boolean
+    append?: boolean,
+    genreIds?: number[]
   ) => Promise<void>;
   fetchGenres: () => Promise<void>;
+  loadMore: () => Promise<void>;
   resetMovies: () => void;
   resetSearchedMovies: () => void;
+  resetFilters: () => void;
 }
 
 /**

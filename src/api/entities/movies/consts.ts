@@ -52,21 +52,35 @@ export const MOVIES_API_URLS = {
   },
 
   /**
-   * Search movies
-   * @param params - Query parameters (query, page, language)
+   * Search movies using Discover API
+   * @param params - Query parameters (with_text_query, with_genres, page, language)
    * @returns Full URL with query parameters
    */
   searchMovies: (params: {
-    query: string;
+    query?: string; // Deprecated: use with_text_query instead
+    with_text_query?: string;
+    with_genres?: number[];
     page?: number;
     language?: string;
   }): string => {
-    const queryString = buildQueryParams({
-      query: params.query,
+    const queryParams: Record<string, string | number | undefined> = {
       page: params.page || 1,
       language: params.language || "en-US",
-    });
-    return `${TMDB_API_BASE_URL}/search/movie?${queryString}`;
+    };
+
+    // Use with_text_query if provided, otherwise fall back to query for backward compatibility
+    const textQuery = params.with_text_query || params.query;
+    if (textQuery) {
+      queryParams.with_text_query = textQuery;
+    }
+
+    // Convert genre IDs array to comma-separated string
+    if (params.with_genres && params.with_genres.length > 0) {
+      queryParams.with_genres = params.with_genres.join(",");
+    }
+
+    const queryString = buildQueryParams(queryParams);
+    return `${TMDB_API_BASE_URL}/discover/movie?${queryString}`;
   },
 
   /**

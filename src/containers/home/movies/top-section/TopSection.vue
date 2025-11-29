@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { Input } from "@/shared/components/atoms/input";
 import { Select } from "@/shared/components/molecules/select";
@@ -24,8 +24,8 @@ import type { SelectOption } from "@/shared/components/molecules/select";
 import { useMoviesStore } from "@/stores/movies";
 
 const moviesStore = useMoviesStore();
-const { search, genres } = storeToRefs(moviesStore);
-const { setSearch } = moviesStore;
+const { search, genres, filterOptions } = storeToRefs(moviesStore);
+const { setSearch, setSelectedGenres } = moviesStore;
 
 const searchValue = computed({
   get: () => search.value,
@@ -42,7 +42,16 @@ const genreOptions = computed<SelectOption[]>(() => {
   }));
 });
 
-const selectedFilters = ref<string[]>([]);
+// Sync selectedFilters with store's selectedGenres
+const selectedFilters = computed({
+  get: () => {
+    return filterOptions.value.selectedGenres.map((id) => String(id));
+  },
+  set: (value: string[]) => {
+    const genreIds = value.map((id) => Number(id));
+    setSelectedGenres(genreIds);
+  },
+});
 </script>
 
 <style scoped lang="scss">

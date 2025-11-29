@@ -26,8 +26,8 @@ export async function getPopularMovies(
 }
 
 /**
- * Search movies from TMDb API
- * @param params - Search parameters (query, page, language)
+ * Search movies from TMDb API using Discover endpoint
+ * @param params - Search parameters (with_text_query, with_genres, page, language)
  * @returns Promise with movies response
  */
 export async function searchMovies(
@@ -35,6 +35,8 @@ export async function searchMovies(
 ): Promise<AxiosResponse<MoviesResponse>> {
   const url = MOVIES_API_URLS.searchMovies({
     query: params.query,
+    with_text_query: params.with_text_query,
+    with_genres: params.with_genres,
     page: params.page,
     language: params.language,
   });

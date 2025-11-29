@@ -28,10 +28,12 @@ export interface MoviesResponse {
 }
 
 /**
- * Search movies query parameters
+ * Search movies query parameters (using Discover API)
  */
 export interface SearchMoviesParams {
-  query: string;
+  query?: string; // Deprecated: use with_text_query instead
+  with_text_query?: string; // For title search
+  with_genres?: number[]; // Array of genre IDs (will be converted to comma-separated string)
   page?: number;
   language?: string;
 }

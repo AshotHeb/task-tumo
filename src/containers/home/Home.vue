@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch, onBeforeUnmount } from "vue";
+import { onMounted, watch, onBeforeUnmount, ref } from "vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { TopSection } from "@/containers/home/movies/top-section";
@@ -16,7 +16,8 @@ import { useScrollPosition } from "@/shared/composables/use-scroll-position";
 
 const route = useRoute();
 const moviesStore = useMoviesStore();
-const { movies, search } = storeToRefs(moviesStore);
+const { movies, search, filterOptions, hasActiveFilters } =
+  storeToRefs(moviesStore);
 const { fetchMovies, fetchSearchedMovies, resetSearchedMovies, fetchGenres } =
   moviesStore;
 
@@ -25,43 +26,93 @@ useScrollPosition({
   key: route.path,
 });
 
+const isMounted = ref(false);
 let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+let stopSearchWatcher: (() => void) | null = null;
+let stopGenresWatcher: (() => void) | null = null;
 
-function debounceSearch(value: string): void {
+async function performSearch(): Promise<void> {
+  // Don't perform search if component is unmounted
+  if (!isMounted.value) {
+    return;
+  }
+
+  // If both search and genres are empty, show popular movies
+  if (!hasActiveFilters.value) {
+    resetSearchedMovies();
+    if (movies.value.length === 0 && isMounted.value) {
+      await fetchMovies(1, false);
+    }
+    return;
+  }
+
+  // Reset and fetch with current search query and selected genres
+  resetSearchedMovies();
+  if (isMounted.value) {
+    await fetchSearchedMovies(
+      search.value.trim(),
+      1,
+      false,
+      filterOptions.value.selectedGenres
+    );
+  }
+}
+
+function debounceSearch(): void {
   if (searchDebounceTimer) {
     clearTimeout(searchDebounceTimer);
   }
 
   searchDebounceTimer = setTimeout(async () => {
-    if (value.trim()) {
-      // Search has value: reset searchedMovies and fetch first page
-      resetSearchedMovies();
-      await fetchSearchedMovies(value.trim(), 1, false);
+    if (isMounted.value) {
+      await performSearch();
     }
-    // If search is empty, do nothing (keep popular movies as they are)
   }, 300);
 }
 
-// Watch search value changes
-watch(
-  search,
-  (newValue) => {
-    debounceSearch(newValue);
-  },
-  { immediate: false }
-);
-
 // Initial load: fetch popular movies only if movies array is empty
 onMounted(async () => {
+  isMounted.value = true;
   await fetchGenres();
   if (movies.value.length === 0) {
     await fetchMovies(1, false);
   }
+
+  // Watch search value changes
+  stopSearchWatcher = watch(
+    search,
+    () => {
+      debounceSearch();
+    },
+    { immediate: false }
+  );
+
+  // Watch selectedGenres changes
+  stopGenresWatcher = watch(
+    () => filterOptions.value.selectedGenres,
+    async () => {
+      await performSearch();
+    },
+    { deep: true }
+  );
 });
 
 onBeforeUnmount(() => {
+  isMounted.value = false;
+
   if (searchDebounceTimer) {
     clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = null;
+  }
+
+  if (stopSearchWatcher) {
+    stopSearchWatcher();
+    stopSearchWatcher = null;
+  }
+
+  if (stopGenresWatcher) {
+    stopGenresWatcher();
+    stopGenresWatcher = null;
   }
 });
 </script>

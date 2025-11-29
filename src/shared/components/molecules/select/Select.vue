@@ -187,6 +187,7 @@ const handleOptionClick = (value: string): void => {
 const handleClear = (): void => {
   pendingValues.value = [];
   emit("update:modelValue", []);
+  closePopover();
 };
 
 const handleApply = (): void => {

@@ -12,6 +12,7 @@ export const useMoviesStore = defineStore("movies", () => {
   // State
   const filterOptions = ref<MoviesState["filterOptions"]>({
     search: getSearchFromUrl(),
+    selectedGenres: [],
   });
   const movies = ref<MoviesState["movies"]>([]);
   const searchedMovies = ref<MoviesState["searchedMovies"]>([]);
@@ -29,10 +30,43 @@ export const useMoviesStore = defineStore("movies", () => {
     () => filterOptions.value.search
   );
 
+  const isLoading = computed<MoviesGetters["isLoading"]>(
+    () => isFetchMoviesLoading.value || isFetchSearchedMoviesLoading.value
+  );
+
+  const hasActiveFilters = computed(() => {
+    const hasSearch = search.value.trim().length > 0;
+    const hasGenres = filterOptions.value.selectedGenres.length > 0;
+    return hasSearch || hasGenres;
+  });
+
+  const displayMovies = computed<MoviesGetters["displayMovies"]>(() => {
+    // Show searched movies if there's a search query or selected genres, otherwise show popular movies
+    return hasActiveFilters.value ? searchedMovies.value : movies.value;
+  });
+
+  const isLoadingMore = computed<MoviesGetters["isLoadingMore"]>(() => {
+    return displayMovies.value.length > 0 && isLoading.value;
+  });
+
+  const canLoadMore = computed<MoviesGetters["canLoadMore"]>(() => {
+    if (hasActiveFilters.value) {
+      return (
+        searchedCurrentPage.value < searchedTotalPages.value &&
+        !isFetchSearchedMoviesLoading.value
+      );
+    }
+    return currentPage.value < totalPages.value && !isFetchMoviesLoading.value;
+  });
+
   // Actions
   function setSearch(searchValue: string): void {
     filterOptions.value.search = searchValue;
     updateSearchInUrl(searchValue);
+  }
+
+  function setSelectedGenres(genreIds: number[]): void {
+    filterOptions.value.selectedGenres = genreIds;
   }
 
   async function fetchMovies(
@@ -70,13 +104,20 @@ export const useMoviesStore = defineStore("movies", () => {
   async function fetchSearchedMovies(
     query: string,
     page: number = 1,
-    append: boolean = false
+    append: boolean = false,
+    genreIds?: number[]
   ): Promise<void> {
     if (isFetchSearchedMoviesLoading.value) {
       return;
     }
 
-    if (!query.trim()) {
+    // Use provided genreIds or fall back to selectedGenres from filterOptions
+    const genresToUse = genreIds ?? filterOptions.value.selectedGenres;
+    const hasQuery = query.trim().length > 0;
+    const hasGenres = genresToUse.length > 0;
+
+    // If both query and genres are empty, clear searched movies
+    if (!hasQuery && !hasGenres) {
       searchedMovies.value = [];
       searchedCurrentPage.value = 0;
       searchedTotalPages.value = 0;
@@ -87,7 +128,8 @@ export const useMoviesStore = defineStore("movies", () => {
       isFetchSearchedMoviesLoading.value = true;
 
       const response = await searchMovies({
-        query: query.trim(),
+        with_text_query: hasQuery ? query.trim() : undefined,
+        with_genres: hasGenres ? genresToUse : undefined,
         page,
         language: "en-US",
       });
@@ -138,6 +180,30 @@ export const useMoviesStore = defineStore("movies", () => {
     }
   }
 
+  async function loadMore(): Promise<void> {
+    if (!canLoadMore.value || isLoading.value) {
+      return;
+    }
+
+    if (hasActiveFilters.value) {
+      const nextPage = searchedCurrentPage.value + 1;
+      await fetchSearchedMovies(
+        search.value.trim(),
+        nextPage,
+        true,
+        filterOptions.value.selectedGenres
+      );
+    } else {
+      const nextPage = currentPage.value + 1;
+      await fetchMovies(nextPage, true);
+    }
+  }
+
+  function resetFilters(): void {
+    setSearch("");
+    setSelectedGenres([]);
+  }
+
   return {
     // State
     filterOptions,
@@ -152,13 +218,21 @@ export const useMoviesStore = defineStore("movies", () => {
     searchedTotalPages,
     // Getters
     search,
+    hasActiveFilters,
+    isLoading,
+    isLoadingMore,
+    displayMovies,
+    canLoadMore,
     // Actions
     setSearch,
+    setSelectedGenres,
     fetchMovies,
     fetchSearchedMovies,
     fetchGenres,
+    loadMore,
     resetMovies,
     resetSearchedMovies,
+    resetFilters,
   };
 });
 
