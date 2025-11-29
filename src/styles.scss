@@ -27,6 +27,28 @@
   --color-input-focus-ring: rgba(59, 130, 246, 0.2);
   --color-input-disabled-bg: #f3f4f6;
   --color-input-clear-hover: rgba(0, 0, 0, 0.05);
+  --color-input-hover-border: #9ca3af;
+
+  // Text colors
+  --color-text: #1f2937;
+  --color-text-muted: #6b7280;
+
+  // Popover colors
+  --color-popover-bg: #ffffff;
+  --color-popover-border: #e5e7eb;
+
+  // Select option colors
+  --color-option-hover-bg: #f3f4f6;
+  --color-option-focus-bg: #e5e7eb;
+  --color-option-selected-bg: #eff6ff;
+  --color-option-selected-text: #1e40af;
+
+  // Checkbox colors
+  --color-checkbox-border: #d1d5db;
+  --color-checkbox-bg: #ffffff;
+  --color-checkbox-selected-bg: #3b82f6;
+  --color-checkbox-selected-border: #3b82f6;
+  --color-checkbox-icon: #ffffff;
 
   // Movie item colors
   --color-movie-title: #1f2937;
@@ -73,6 +95,28 @@
   --color-input-focus-ring: rgba(96, 165, 250, 0.2);
   --color-input-disabled-bg: #111827;
   --color-input-clear-hover: rgba(255, 255, 255, 0.1);
+  --color-input-hover-border: #4b5563;
+
+  // Text colors
+  --color-text: #f9fafb;
+  --color-text-muted: #9ca3af;
+
+  // Popover colors
+  --color-popover-bg: #1f2937;
+  --color-popover-border: #374151;
+
+  // Select option colors
+  --color-option-hover-bg: #374151;
+  --color-option-focus-bg: #4b5563;
+  --color-option-selected-bg: rgba(96, 165, 250, 0.15);
+  --color-option-selected-text: #60a5fa;
+
+  // Checkbox colors
+  --color-checkbox-border: #4b5563;
+  --color-checkbox-bg: #1f2937;
+  --color-checkbox-selected-bg: #60a5fa;
+  --color-checkbox-selected-border: #60a5fa;
+  --color-checkbox-icon: #ffffff;
 
   // Movie item colors
   --color-movie-title: #f9fafb;
