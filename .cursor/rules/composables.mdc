@@ -21,7 +21,8 @@ alwaysApply: true
 use-{name}/
 ├── index.ts         # Main composable logic
 ├── types.ts         # TypeScript type definitions
-└── utils.ts         # Utility functions (if needed)
+├── utils.ts         # Utility functions (if needed)
+└── index.test.ts    # Test file (REQUIRED for shared composables)
 ```
 
 ## Composable File Structure
@@ -29,11 +30,13 @@ use-{name}/
 ### 1. Main Composable File (index.ts)
 
 **Purpose:**
+
 - Contains the main composable function logic
 - Exports the composable function with `use` prefix
 - Handles reactive state, lifecycle hooks, and side effects
 
 **Structure:**
+
 - Import Vue composables and types
 - Import types from `./types`
 - Import utilities from `./utils` (if needed)
@@ -47,9 +50,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 import type { UseComposableOptions } from "./types";
 import { helperFunction } from "./utils";
 
-export function useComposableName(
-  options: UseComposableOptions
-): ReturnType {
+export function useComposableName(options: UseComposableOptions): ReturnType {
   const { param1, param2 } = options;
 
   const state = ref<StateType>(initialValue);
@@ -81,11 +82,13 @@ export function useComposableName(
 ### 2. Types File (types.ts)
 
 **Purpose:**
+
 - Define all TypeScript interfaces and types used by the composable
 - Export options interface: `Use{Name}Options`
 - Export return type interface: `Use{Name}Return` (if complex)
 
 **Structure:**
+
 - Export interfaces for options/parameters
 - Export return type interfaces
 - Use descriptive type names
@@ -109,19 +112,70 @@ export interface UseComposableReturn {
 }
 ```
 
+### 3. Test File (index.test.ts)
+
+**Purpose:**
+
+- Comprehensive tests for the composable
+- **REQUIRED for all shared composables** (in `src/shared/composables/`)
+- Test reactive behavior, lifecycle hooks, and edge cases
+
+**Structure:**
+
+- Use Jest and Vue Test Utils
+- Test composable within a Vue component context
+- Test all parameters, return values, and edge cases
+- Test lifecycle hooks (onMounted, onUnmounted, etc.)
+- Test reactive updates
+
+**Example:**
+
+```typescript
+import {
+  describe,
+  it,
+  expect,
+  jest,
+  beforeEach,
+  afterEach,
+} from "@jest/globals";
+import { mount } from "@vue/test-utils";
+import { ref, defineComponent } from "vue";
+import { useComposableName } from "./index";
+
+describe("useComposableName", () => {
+  let handler: ReturnType<typeof jest.fn>;
+
+  beforeEach(() => {
+    handler = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should work correctly", async () => {
+    // test implementation
+  });
+});
+```
+
 ### 3. Utils File (utils.ts)
 
 **Purpose:**
+
 - Contains pure utility functions used by the composable
 - Functions should be pure (no side effects)
 - Used for complex calculations or transformations
 
 **When to create:**
+
 - Composable has complex calculation logic
 - Logic can be reused or tested independently
 - Logic is better separated for readability
 
 **Structure:**
+
 - Export pure functions
 - Use TypeScript types from `./types`
 - Keep functions focused and single-purpose
@@ -141,7 +195,6 @@ export function transformData(input: InputType): OutputType {
   return transformed;
 }
 ```
-
 
 ## Composable Implementation Rules
 
@@ -219,6 +272,24 @@ export function transformData(input: InputType): OutputType {
 - Clean up resources properly
 - Use `shallowRef()` for large objects when deep reactivity isn't needed
 
+## Testing Requirements
+
+### Shared Composables
+
+- **All shared composables** (in `src/shared/composables/`) **must have a test file**
+- Test file should be named `index.test.ts` in the composable folder
+- Tests should cover:
+  - All parameters and their effects
+  - Return values and their reactivity
+  - Lifecycle hooks (onMounted, onUnmounted)
+  - Edge cases (null refs, disabled states, etc.)
+  - Side effects cleanup
+
+### Component-Specific Composables
+
+- Component-specific composables can have tests (optional)
+- Tests can be included in component test file if preferred
+
 ## Import/Export Patterns
 
 ### Importing Composables
@@ -232,7 +303,6 @@ export function transformData(input: InputType): OutputType {
 - Export composable function as named export
 - Export types from `types.ts` for convenience
 - Export utilities if needed (usually not needed)
-
 
 ## Anti-Patterns to Avoid
 
@@ -297,6 +367,27 @@ onUnmounted(() => {
 });
 ```
 
+### ❌ Don't Skip Tests for Shared Composables
+
+```
+<!-- BAD -->
+shared/composables/
+└── use-composable/
+    ├── index.ts
+    └── types.ts
+    # ❌ Missing index.test.ts
+```
+
+**Instead, always include tests:**
+
+```
+<!-- GOOD -->
+shared/composables/
+└── use-composable/
+    ├── index.ts
+    ├── types.ts
+    └── index.test.ts  # ✅ Required
+```
 
 ### ❌ Don't Return Arrays
 
@@ -351,7 +442,8 @@ export function useComposable() {
 ```
 use-toggle/
 ├── index.ts
-└── types.ts
+├── types.ts
+└── index.test.ts
 ```
 
 ### Complex Composable (with utils)
@@ -360,7 +452,8 @@ use-toggle/
 use-on-click-outside/
 ├── index.ts
 ├── types.ts
-└── utils.ts
+├── utils.ts
+└── index.test.ts
 ```
 
 ## Composable Usage in Components

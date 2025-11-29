@@ -10,6 +10,7 @@ A modern Vue.js 3 application built with TypeScript, Vite, Pinia, and Tailwind C
 - **Pinia** - State management library for Vue
 - **Vue Router** - Official router for Vue.js
 - **Tailwind CSS** - Utility-first CSS framework
+- **Jest** - JavaScript testing framework
 - **Axios** - Promise-based HTTP client
 
 ## Prerequisites
@@ -49,6 +50,26 @@ Preview the production build:
 
 ```bash
 npm run preview
+```
+
+### Testing
+
+Run tests:
+
+```bash
+npm test
+```
+
+Run tests in watch mode:
+
+```bash
+npm run test:watch
+```
+
+Run tests with coverage:
+
+```bash
+npm run test:coverage
 ```
 
 ## Project Structure
@@ -109,6 +130,7 @@ The project follows **Atomic Design** principles:
 Each component follows a consistent structure:
 
 - `{ComponentName}.vue` - Main component file
+- `{ComponentName}.test.ts` - Test file (required for shared components)
 - `types.ts` - TypeScript type definitions
 - `utils.ts` - Utility functions (if needed)
 - `styles.scss` - Component-specific styles
@@ -150,12 +172,13 @@ Shared composables follow a consistent structure:
 - `index.ts` - Main composable logic
 - `types.ts` - TypeScript type definitions
 - `utils.ts` - Utility functions (if needed)
+- `index.test.ts` - Test file (required for shared composables)
 
 ## Development Guidelines
 
 This project follows strict development guidelines defined in `.cursor/rules/`:
 
-- **Components** (`components.mdc`) - Component structure and styling requirements
+- **Components** (`components.mdc`) - Component structure, styling, and testing requirements
 - **State Management** (`state-management.mdc`) - Pinia store patterns and best practices
 - **API Service** (`api.mdc`) - API structure and entity organization
 - **Composables** (`composables.mdc`) - Composable structure and implementation patterns
@@ -169,6 +192,7 @@ This project follows strict development guidelines defined in `.cursor/rules/`:
 - ✅ API service layer with Axios
 - ✅ Routing with Vue Router
 - ✅ Utility-first styling with Tailwind CSS
+- ✅ Comprehensive test coverage with Jest
 - ✅ Reusable composables
 - ✅ Consistent code organization
 
@@ -182,20 +206,24 @@ VITE_API_BASE_URL=https://api.example.com
 
 ## Scripts Reference
 
-| Command           | Description              |
-| ----------------- | ------------------------ |
-| `npm run dev`     | Start development server |
-| `npm run build`   | Build for production     |
-| `npm run preview` | Preview production build |
+| Command                 | Description              |
+| ----------------------- | ------------------------ |
+| `npm run dev`           | Start development server |
+| `npm run build`         | Build for production     |
+| `npm run preview`       | Preview production build |
+| `npm test`              | Run tests                |
+| `npm run test:watch`    | Run tests in watch mode  |
+| `npm run test:coverage` | Run tests with coverage  |
 
 ## Contributing
 
 When contributing to this project, please follow the guidelines in `.cursor/rules/`:
 
 1. Follow the component structure patterns
-2. Use TypeScript types consistently
-3. Follow the API service patterns
-4. Maintain consistent code style
+2. Write tests for shared components and composables
+3. Use TypeScript types consistently
+4. Follow the API service patterns
+5. Maintain consistent code style
 
 ## License
 
