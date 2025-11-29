@@ -25,4 +25,17 @@
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     }
   }
+
+  &__sentinel {
+    height: 1px;
+    width: 100%;
+    margin-top: 2rem;
+  }
+
+  &__loading-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
 }
