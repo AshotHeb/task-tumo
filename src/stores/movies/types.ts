@@ -18,6 +18,7 @@ export interface MoviesState {
   genres: Genre[];
   isFetchMoviesLoading: boolean;
   isFetchSearchedMoviesLoading: boolean;
+  isUserTypinginSearchInput: boolean;
   currentPage: number;
   searchedCurrentPage: number;
   totalPages: number;

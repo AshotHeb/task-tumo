@@ -1,9 +1,6 @@
 <template>
   <div class="movies-list">
-    <div
-      v-if="isLoading && displayMovies.length === 0"
-      class="movies-list__loading"
-    >
+    <div v-if="isLoading" class="movies-list__loading">
       <Loader size="lg" />
     </div>
     <div v-else-if="displayMovies.length === 0" class="movies-list__empty">

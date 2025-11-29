@@ -20,6 +20,8 @@ export const useMoviesStore = defineStore("movies", () => {
   const isFetchMoviesLoading = ref<MoviesState["isFetchMoviesLoading"]>(false);
   const isFetchSearchedMoviesLoading =
     ref<MoviesState["isFetchSearchedMoviesLoading"]>(false);
+  const isUserTypinginSearchInput =
+    ref<MoviesState["isUserTypinginSearchInput"]>(false);
   const currentPage = ref<MoviesState["currentPage"]>(0);
   const searchedCurrentPage = ref<MoviesState["searchedCurrentPage"]>(0);
   const totalPages = ref<MoviesState["totalPages"]>(0);
@@ -31,7 +33,10 @@ export const useMoviesStore = defineStore("movies", () => {
   );
 
   const isLoading = computed<MoviesGetters["isLoading"]>(
-    () => isFetchMoviesLoading.value || isFetchSearchedMoviesLoading.value
+    () =>
+      isFetchMoviesLoading.value ||
+      isFetchSearchedMoviesLoading.value ||
+      isUserTypinginSearchInput.value
   );
 
   const hasActiveFilters = computed(() => {
@@ -63,6 +68,10 @@ export const useMoviesStore = defineStore("movies", () => {
   function setSearch(searchValue: string): void {
     filterOptions.value.search = searchValue;
     updateSearchInUrl(searchValue);
+    // Set typing state to true if user is typing (search value is not empty)
+    if (searchValue.trim().length > 0) {
+      isUserTypinginSearchInput.value = true;
+    }
   }
 
   function setSelectedGenres(genreIds: number[]): void {
@@ -121,6 +130,7 @@ export const useMoviesStore = defineStore("movies", () => {
       searchedMovies.value = [];
       searchedCurrentPage.value = 0;
       searchedTotalPages.value = 0;
+      isUserTypinginSearchInput.value = false;
       return;
     }
 
@@ -150,6 +160,8 @@ export const useMoviesStore = defineStore("movies", () => {
       throw error;
     } finally {
       isFetchSearchedMoviesLoading.value = false;
+      // Set typing state to false when request completes
+      isUserTypinginSearchInput.value = false;
     }
   }
 
@@ -202,6 +214,7 @@ export const useMoviesStore = defineStore("movies", () => {
   function resetFilters(): void {
     setSearch("");
     setSelectedGenres([]);
+    isUserTypinginSearchInput.value = false;
   }
 
   return {
@@ -212,6 +225,7 @@ export const useMoviesStore = defineStore("movies", () => {
     genres,
     isFetchMoviesLoading,
     isFetchSearchedMoviesLoading,
+    isUserTypinginSearchInput,
     currentPage,
     searchedCurrentPage,
     totalPages,
