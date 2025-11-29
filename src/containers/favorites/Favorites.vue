@@ -1,6 +1,8 @@
 <template>
   <Layout>
-    <div class="home"></div>
+    <div class="favorites">
+      <h1>Favorites</h1>
+    </div>
   </Layout>
 </template>
 
@@ -11,3 +13,4 @@ import Layout from "@/layout/Layout.vue";
 <style scoped lang="scss">
 @import "./styles.scss";
 </style>
+

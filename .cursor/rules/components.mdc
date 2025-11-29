@@ -56,8 +56,10 @@ alwaysApply: true
 **Style Section:**
 
 - Always use `<style scoped lang="scss">` for component styles
+- **ALL CSS must be written in `styles.scss` file, NOT in the `<style>` tag**
 - Import component SCSS file: `@import "./styles.scss"`
 - Keep styles isolated and scoped to the component
+- The `<style>` tag should only contain the import statement
 
 **Example:**
 
@@ -313,7 +315,9 @@ const { config, titleTag } = useHeading(computed(() => props.variant));
 ### Styling
 
 - **Always create a `styles.scss` file** for component-specific styles
+- **ALL CSS must be written in `styles.scss` file, NOT directly in the `<style>` tag**
 - Import SCSS file in `<style scoped lang="scss">` block: `@import "./styles.scss"`
+- The `<style>` tag should only contain the import statement, no CSS rules
 - Use regular CSS/SCSS for styling
 - Extract class generation logic to `utils.ts` if complex
 - Support Vue's native `class` attribute via `$attrs`
@@ -455,7 +459,7 @@ interface Props {
 
 ```vue
 <!-- BAD -->
-<style scoped>
+<style scoped lang="scss">
 .component {
   color: red;
 }
@@ -469,6 +473,15 @@ interface Props {
 <style scoped lang="scss">
 @import "./styles.scss";
 </style>
+```
+
+**And write ALL CSS in `styles.scss`:**
+
+```scss
+// styles.scss
+.component {
+  color: red;
+}
 ```
 
 ### ❌ Don't Skip Tests for Shared Components
