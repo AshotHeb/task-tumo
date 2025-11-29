@@ -1,7 +1,11 @@
 <template>
-  <div class="app"></div>
+  <div class="app">
+    <RouterView />
+  </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { RouterView } from "vue-router";
+</script>
 
 <style scoped lang="scss"></style>

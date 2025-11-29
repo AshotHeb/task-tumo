@@ -14,6 +14,7 @@ alwaysApply: true
 - Each store folder must contain:
   - `types.ts` - TypeScript type definitions
   - `index.ts` - Main store logic
+  - `utils.ts` - Utility functions (optional, only if needed)
 
 ### File Structure Example
 
@@ -21,6 +22,10 @@ alwaysApply: true
 stores/
   ├── counter/
   │   ├── types.ts
+  │   └── index.ts
+  ├── theme/
+  │   ├── types.ts
+  │   ├── utils.ts
   │   └── index.ts
   ├── user/
   │   ├── types.ts
@@ -79,10 +84,12 @@ export type CounterStore = CounterState & CounterGetters & CounterActions;
 ### 3. Store Implementation (index.ts)
 
 - Import types from `./types`
+- Import utility functions from `./utils` (if utils.ts exists)
 - Use type annotations for refs and computed: `ref<StateType["property"]>(initialValue)`
 - Group code with comments: `// State`, `// Getters`, `// Actions`
 - Return all state, getters, and actions in a single object
 - Export types at the end: `export type { ... } from "./types"`
+- Keep `index.ts` focused on store logic only - move pure utility functions to `utils.ts`
 - Example:
 
 ```typescript
@@ -180,9 +187,48 @@ const { increment } = store; // Actions don't need reactivity
 - Always export types from store's index.ts
 - Don't export types from main stores/index.ts
 
+### Utility Functions (utils.ts)
+
+- Create `utils.ts` when store has pure utility functions that don't depend on store state
+- Utility functions should be pure (no side effects) or handle side effects independently
+- Examples: localStorage helpers, API helpers, formatting functions, validation functions
+- Export constants used by utilities (e.g., storage keys)
+- Import utilities in `index.ts` and use them in actions or getters
+- Example:
+
+```typescript
+// utils.ts
+export const STORAGE_KEY = "my-key";
+
+export function getFromStorage(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(STORAGE_KEY);
+}
+
+export function saveToStorage(value: string): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(STORAGE_KEY, value);
+}
+
+// index.ts
+import { getFromStorage, saveToStorage } from "./utils";
+
+export const useMyStore = defineStore("my", () => {
+  const data = ref(getFromStorage());
+  
+  function updateData(newData: string): void {
+    data.value = newData;
+    saveToStorage(newData);
+  }
+  
+  return { data, updateData };
+});
+```
+
 ## File Naming Conventions
 
 - Store folders: lowercase, singular (e.g., `counter/`, `user/`)
 - Type file: always `types.ts`
 - Store file: always `index.ts`
+- Utility file: always `utils.ts` (optional)
 - Store hook: `use{Entity}Store` (e.g., `useCounterStore`)

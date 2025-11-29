@@ -1,7 +1,16 @@
 // Global app styles
 
+// CSS Variables for Light Theme (default)
+:root,
+[data-theme="light"] {
+  --color-test: #000000;
+}
+
+// CSS Variables for Dark Theme
+[data-theme="dark"] {
+  --color-test: #ffffff;
+}
+
 .app {
   // Add global app styles here if needed
 }
-
-
