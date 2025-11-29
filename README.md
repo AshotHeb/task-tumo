@@ -1,6 +1,6 @@
 # Vue Task
 
-A modern Vue.js 3 application built with TypeScript, Vite, Pinia, and Tailwind CSS. This project follows best practices for component architecture, state management, and API integration.
+A modern Vue.js 3 application built with TypeScript, Vite, and Pinia. This project follows best practices for component architecture, state management, and API integration.
 
 ## Tech Stack
 
@@ -9,7 +9,6 @@ A modern Vue.js 3 application built with TypeScript, Vite, Pinia, and Tailwind C
 - **Vite** - Next-generation frontend build tool
 - **Pinia** - State management library for Vue
 - **Vue Router** - Official router for Vue.js
-- **Tailwind CSS** - Utility-first CSS framework
 - **Jest** - JavaScript testing framework
 - **Axios** - Promise-based HTTP client
 
@@ -191,7 +190,6 @@ This project follows strict development guidelines defined in `.cursor/rules/`:
 - ✅ State management with Pinia
 - ✅ API service layer with Axios
 - ✅ Routing with Vue Router
-- ✅ Utility-first styling with Tailwind CSS
 - ✅ Comprehensive test coverage with Jest
 - ✅ Reusable composables
 - ✅ Consistent code organization
@@ -228,4 +226,3 @@ When contributing to this project, please follow the guidelines in `.cursor/rule
 ## License
 
 MIT
-

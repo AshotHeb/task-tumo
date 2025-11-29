@@ -1,12 +1,8 @@
 <template>
-  <div class="home">
-    <Heading title="Welcome Home" subtitle="This is the home page" />
-  </div>
+  <div class="home"></div>
 </template>
 
-<script setup lang="ts">
-import { Heading } from "@/shared/components/atoms/heading";
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="scss">
 @import "./styles.scss";

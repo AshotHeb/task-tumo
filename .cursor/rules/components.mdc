@@ -129,7 +129,7 @@ export interface ComponentProps {
 
 - Component has complex class generation logic
 - Component has reusable utility functions
-- Component has mapping objects (e.g., size to Tailwind classes)
+- Component has mapping objects (e.g., size to CSS classes)
 
 **Structure:**
 
@@ -185,7 +185,6 @@ export { getComponentClasses } from "./utils";
 
 - Contains all component-specific styles
 - Uses scoped styles to prevent style leakage
-- Can use Tailwind `@apply` directive
 - Can use CSS custom properties for theming
 
 **Structure:**
@@ -315,8 +314,7 @@ const { config, titleTag } = useHeading(computed(() => props.variant));
 
 - **Always create a `styles.scss` file** for component-specific styles
 - Import SCSS file in `<style scoped lang="scss">` block: `@import "./styles.scss"`
-- Use Tailwind CSS utility classes in templates
-- Use Tailwind `@apply` directive in SCSS files
+- Use regular CSS/SCSS for styling
 - Extract class generation logic to `utils.ts` if complex
 - Support Vue's native `class` attribute via `$attrs`
 - Use `:class` binding for dynamic classes
