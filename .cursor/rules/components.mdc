@@ -19,7 +19,6 @@ alwaysApply: true
 ```
 {component-name}/
 ├── {ComponentName}.vue    # Main component file (PascalCase)
-├── {ComponentName}.test.ts # Test file (required for shared components)
 ├── types.ts               # TypeScript type definitions
 ├── utils.ts               # Utility functions (if needed)
 ├── styles.scss            # Component styles (scoped)
@@ -373,25 +372,16 @@ const { config, titleTag } = useHeading(computed(() => props.variant));
 - Document complex logic with comments
 - Keep components small and composable
 
-
 ### Testing
 
-- **All shared components** (components in `src/shared/components/`) **must have test files**
-- Test file should be named `{ComponentName}.test.ts` in the component folder
+- **DO NOT create test files during component creation**
+- Test files can be added later if needed for critical components
+- If creating test files later, name them `{ComponentName}.test.ts` in the component folder
 - Test all props, slots, events, and computed properties
 - Test class generation and attribute forwarding
 - Use Jest and Vue Test Utils for component testing
 
-**Example:**
-
-```
-text/
-├── Text.vue
-├── Text.test.ts    # ✅ Required for shared components
-├── types.ts
-├── utils.ts
-└── index.ts
-```
+**Note:** Test files are optional and should not be created during initial component setup.
 
 ### Code Organization
 
@@ -484,26 +474,26 @@ interface Props {
 }
 ```
 
-### ❌ Don't Skip Tests for Shared Components
+### ❌ Don't Create Test Files During Component Creation
 
 ```
-<!-- BAD -->
+<!-- BAD - Creating test file during component creation -->
 text/
 ├── Text.vue
+├── Text.test.ts    # ❌ Don't create during component creation
 ├── types.ts
 └── index.ts
-# ❌ Missing Text.test.ts
 ```
 
-**Instead, always add tests:**
+**Instead, create components without test files:**
 
 ```
 <!-- GOOD -->
 text/
 ├── Text.vue
-├── Text.test.ts    # ✅ Required
 ├── types.ts
 └── index.ts
+# Test files can be added later if needed
 ```
 
 ### ❌ Don't Put Composables in Component File
@@ -548,7 +538,6 @@ heading/
         └── utils.ts
 ```
 
-
 ## Component Examples
 
 ### Simple Component (no utils needed)
@@ -556,7 +545,6 @@ heading/
 ```
 button/
 ├── Button.vue
-├── Button.test.ts    # ✅ Required for shared components
 ├── types.ts
 └── index.ts
 ```
