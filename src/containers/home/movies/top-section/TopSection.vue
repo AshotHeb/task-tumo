@@ -8,7 +8,7 @@
     />
     <Select
       v-model="selectedFilters"
-      :options="mockOptions"
+      :options="genreOptions"
       placeholder="Filter by..."
       class="top-section__select"
     />
@@ -24,7 +24,7 @@ import type { SelectOption } from "@/shared/components/molecules/select";
 import { useMoviesStore } from "@/stores/movies";
 
 const moviesStore = useMoviesStore();
-const { search } = storeToRefs(moviesStore);
+const { search, genres } = storeToRefs(moviesStore);
 const { setSearch } = moviesStore;
 
 const searchValue = computed({
@@ -34,17 +34,13 @@ const searchValue = computed({
   },
 });
 
-// Mock options for Select component
-const mockOptions: SelectOption[] = [
-  { value: "action", label: "Action" },
-  { value: "comedy", label: "Comedy" },
-  { value: "drama", label: "Drama" },
-  { value: "horror", label: "Horror" },
-  { value: "sci-fi", label: "Sci-Fi" },
-  { value: "thriller", label: "Thriller" },
-  { value: "romance", label: "Romance" },
-  { value: "adventure", label: "Adventure" },
-];
+// Map genres from store to SelectOption format
+const genreOptions = computed<SelectOption[]>(() => {
+  return genres.value.map((genre) => ({
+    value: String(genre.id),
+    label: genre.name,
+  }));
+});
 
 const selectedFilters = ref<string[]>([]);
 </script>
