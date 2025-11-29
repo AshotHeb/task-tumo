@@ -163,7 +163,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { ArrowLeft } from "lucide-vue-next";
@@ -223,13 +223,27 @@ const handleBack = (): void => {
   router.push("/");
 };
 
+// Scroll to top function
+const scrollToTop = (): void => {
+  window.scrollTo({
+    top: 0,
+    behavior: "instant",
+  });
+};
+
 // Set currentMovieId from route params and fetch movie details
 watch(
   movieId,
   async (newId) => {
+    // Scroll to top when movie ID changes
+    scrollToTop();
+
     if (newId && !isNaN(newId)) {
       setCurrentMovieId(newId);
       await fetchMovieDetails(newId);
+      // Ensure scroll to top after content loads
+      await nextTick();
+      scrollToTop();
     } else {
       setCurrentMovieId(null);
     }
@@ -238,12 +252,19 @@ watch(
 );
 
 onMounted(async () => {
+  // Scroll to top on mount
+  scrollToTop();
+
   if (movieId.value && !isNaN(movieId.value)) {
     setCurrentMovieId(movieId.value);
     await fetchMovieDetails(movieId.value);
   } else {
     setCurrentMovieId(null);
   }
+
+  // Ensure scroll to top after content loads
+  await nextTick();
+  scrollToTop();
 });
 </script>
 
