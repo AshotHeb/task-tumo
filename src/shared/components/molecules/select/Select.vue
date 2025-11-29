@@ -126,10 +126,9 @@ const contentStyles = computed(() => {
 });
 
 const isSelected = (value: string): boolean => {
-  const valuesToCheck =
-    pendingValues.value.length > 0 || isOpen.value
-      ? pendingValues.value
-      : selectedValues.value;
+  // When popover is open, always use pendingValues (even if empty)
+  // When popover is closed, use selectedValues
+  const valuesToCheck = isOpen.value ? pendingValues.value : selectedValues.value;
   return valuesToCheck.includes(value);
 };
 
@@ -166,11 +165,11 @@ const closePopover = (): void => {
 const pendingValues = ref<string[]>([]);
 
 const handleOptionClick = (value: string): void => {
-  const currentValues = [
-    ...(pendingValues.value.length > 0
-      ? pendingValues.value
-      : selectedValues.value),
-  ];
+  // When popover is open, always work with pendingValues (even if empty)
+  // This ensures that after clearing, we work with the empty array, not selectedValues
+  const currentValues = isOpen.value
+    ? [...pendingValues.value]
+    : [...selectedValues.value];
   const index = currentValues.indexOf(value);
 
   if (index > -1) {
