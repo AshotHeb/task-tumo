@@ -68,3 +68,4 @@ function handleFavoriteClick(): void {
 <style scoped lang="scss">
 @import "./styles.scss";
 </style>
+
