@@ -1,0 +1,464 @@
+---
+description: Guidelines for Vue composables structure, organization, and implementation patterns
+globs: ["**/composables/**/*.ts"]
+alwaysApply: true
+---
+
+# Composables Rules
+
+## Composable Structure
+
+### Folder Organization
+
+- Shared composables: `src/shared/composables/{composable-name}/`
+- Component-specific composables: `src/shared/components/{component-type}/{component-name}/composables/{composable-name}/`
+- Each composable gets its own folder: `use-{name}/`
+- Folder names should be lowercase, kebab-case (e.g., `use-on-click-outside/`, `use-heading/`)
+
+### Required Files in Each Composable Folder
+
+```
+use-{name}/
+├── index.ts         # Main composable logic
+├── types.ts         # TypeScript type definitions
+├── utils.ts         # Utility functions (if needed)
+└── index.test.ts    # Test file (REQUIRED for shared composables)
+```
+
+## Composable File Structure
+
+### 1. Main Composable File (index.ts)
+
+**Purpose:**
+- Contains the main composable function logic
+- Exports the composable function with `use` prefix
+- Handles reactive state, lifecycle hooks, and side effects
+
+**Structure:**
+- Import Vue composables and types
+- Import types from `./types`
+- Import utilities from `./utils` (if needed)
+- Export composable function: `use{Name}` (PascalCase)
+- Function should accept parameters and return reactive values/functions
+
+**Example:**
+
+```typescript
+import { ref, onMounted, onUnmounted } from "vue";
+import type { UseComposableOptions } from "./types";
+import { helperFunction } from "./utils";
+
+export function useComposableName(
+  options: UseComposableOptions
+): ReturnType {
+  const { param1, param2 } = options;
+
+  const state = ref<StateType>(initialValue);
+
+  const computedValue = computed(() => {
+    // computed logic
+  });
+
+  function action() {
+    // action logic
+  }
+
+  onMounted(() => {
+    // setup logic
+  });
+
+  onUnmounted(() => {
+    // cleanup logic
+  });
+
+  return {
+    state,
+    computedValue,
+    action,
+  };
+}
+```
+
+### 2. Types File (types.ts)
+
+**Purpose:**
+- Define all TypeScript interfaces and types used by the composable
+- Export options interface: `Use{Name}Options`
+- Export return type interface: `Use{Name}Return` (if complex)
+
+**Structure:**
+- Export interfaces for options/parameters
+- Export return type interfaces
+- Use descriptive type names
+- Group related types together
+
+**Example:**
+
+```typescript
+import type { Ref } from "vue";
+
+export interface UseComposableOptions {
+  elementRef: Ref<HTMLElement | null | undefined>;
+  handler: (event: Event) => void;
+  enabled?: Ref<boolean> | boolean;
+}
+
+export interface UseComposableReturn {
+  state: Ref<StateType>;
+  computedValue: ComputedRef<ComputedType>;
+  action: () => void;
+}
+```
+
+### 3. Utils File (utils.ts)
+
+**Purpose:**
+- Contains pure utility functions used by the composable
+- Functions should be pure (no side effects)
+- Used for complex calculations or transformations
+
+**When to create:**
+- Composable has complex calculation logic
+- Logic can be reused or tested independently
+- Logic is better separated for readability
+
+**Structure:**
+- Export pure functions
+- Use TypeScript types from `./types`
+- Keep functions focused and single-purpose
+
+**Example:**
+
+```typescript
+import type { ComposableOption } from "./types";
+
+export function calculateValue(option: ComposableOption): number {
+  // pure calculation logic
+  return result;
+}
+
+export function transformData(input: InputType): OutputType {
+  // pure transformation logic
+  return transformed;
+}
+```
+
+### 4. Test File (index.test.ts)
+
+**Purpose:**
+- Comprehensive tests for the composable
+- **REQUIRED for all shared composables** (in `src/shared/composables/`)
+- Test reactive behavior, lifecycle hooks, and edge cases
+
+**Structure:**
+- Use Vitest and Vue Test Utils
+- Test composable within a Vue component context
+- Test all parameters, return values, and edge cases
+- Test lifecycle hooks (onMounted, onUnmounted, etc.)
+- Test reactive updates
+
+**Example:**
+
+```typescript
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { mount } from "@vue/test-utils";
+import { ref, defineComponent } from "vue";
+import { useComposableName } from "./index";
+
+describe("useComposableName", () => {
+  let handler: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    handler = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should work correctly", async () => {
+    // test implementation
+  });
+});
+```
+
+## Composable Implementation Rules
+
+### Naming Conventions
+
+- Composable function: `use{Name}` (PascalCase, e.g., `useOnClickOutside`, `useHeading`)
+- Folder name: `use-{name}` (kebab-case, e.g., `use-on-click-outside/`, `use-heading/`)
+- Options interface: `Use{Name}Options` (e.g., `UseOnClickOutsideOptions`)
+- Return type interface: `Use{Name}Return` (e.g., `UseOnClickOutsideReturn`)
+
+### Function Signature
+
+- Accept options object as parameter (for multiple parameters)
+- Accept direct parameters (for single/simple parameters)
+- Return object with reactive values and functions
+- Use TypeScript types for all parameters and return values
+
+### Reactive State
+
+- Use `ref()` for reactive state
+- Use `computed()` for derived/computed values
+- Use `reactive()` for complex objects (when needed)
+- Initialize state with default values
+
+### Lifecycle Hooks
+
+- Use `onMounted()` for setup logic
+- Use `onUnmounted()` for cleanup (event listeners, timers, etc.)
+- Use `onBeforeUnmount()` if cleanup needs to happen before unmount
+- Always clean up side effects in `onUnmounted()`
+
+### Side Effects
+
+- Register event listeners in `onMounted()`
+- Remove event listeners in `onUnmounted()`
+- Clear timers/intervals in `onUnmounted()`
+- Cancel API requests if component unmounts (when applicable)
+
+## Best Practices
+
+### Composable Design
+
+- Keep composables focused and single-purpose
+- Extract reusable logic from components
+- Make composables testable independently
+- Use TypeScript for type safety
+- Handle edge cases (null refs, unmounted components, etc.)
+
+### Parameter Handling
+
+- Accept `Ref<T>` or direct values for flexibility
+- Provide sensible defaults when possible
+- Validate parameters when needed
+- Use options object for multiple parameters
+
+### Return Values
+
+- Return object with named properties (not array)
+- Return reactive refs for state
+- Return computed refs for derived values
+- Return functions for actions
+- Export return type interface for type safety
+
+### Error Handling
+
+- Handle errors gracefully
+- Don't throw errors that break the component
+- Log errors for debugging (in development)
+- Return error state if needed
+
+### Performance
+
+- Use `computed()` for expensive calculations
+- Avoid unnecessary re-renders
+- Clean up resources properly
+- Use `shallowRef()` for large objects when deep reactivity isn't needed
+
+## Import/Export Patterns
+
+### Importing Composables
+
+- Import from composable folder: `import { useComposableName } from '@/shared/composables/use-composable-name'`
+- Import types separately: `import type { UseComposableOptions } from '@/shared/composables/use-composable-name/types'`
+
+### Exporting Composables
+
+- Each composable folder has its own `index.ts`
+- Export composable function as named export
+- Export types from `types.ts` for convenience
+- Export utilities if needed (usually not needed)
+
+## Testing Requirements
+
+### Shared Composables
+
+- **All shared composables** (in `src/shared/composables/`) **must have a test file**
+- Test file should be named `index.test.ts` in the composable folder
+- Tests should cover:
+  - All parameters and their effects
+  - Return values and their reactivity
+  - Lifecycle hooks (onMounted, onUnmounted)
+  - Edge cases (null refs, disabled states, etc.)
+  - Side effects cleanup
+
+### Component-Specific Composables
+
+- Component-specific composables can have tests (optional)
+- Tests can be included in component test file if preferred
+
+## Anti-Patterns to Avoid
+
+### ❌ Don't Create Composables Without Folder Structure
+
+```
+<!-- BAD -->
+composables/
+└── useComposable.ts  # ❌ Wrong location
+```
+
+**Instead, use proper folder structure:**
+
+```
+<!-- GOOD -->
+composables/
+└── use-composable/
+    ├── index.ts
+    ├── types.ts
+    └── index.test.ts
+```
+
+### ❌ Don't Mix Types and Logic
+
+```typescript
+// BAD - index.ts
+export interface Options { ... }
+export function useComposable() { ... }
+```
+
+**Instead, separate concerns:**
+
+```typescript
+// GOOD - types.ts
+export interface Options { ... }
+
+// GOOD - index.ts
+import type { Options } from "./types";
+export function useComposable() { ... }
+```
+
+### ❌ Don't Forget Cleanup
+
+```typescript
+// BAD
+onMounted(() => {
+  document.addEventListener("click", handler);
+  // ❌ Missing cleanup
+});
+```
+
+**Instead, always clean up:**
+
+```typescript
+// GOOD
+onMounted(() => {
+  document.addEventListener("click", handler);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handler);
+});
+```
+
+### ❌ Don't Skip Tests for Shared Composables
+
+```
+<!-- BAD -->
+shared/composables/
+└── use-composable/
+    ├── index.ts
+    └── types.ts
+    # ❌ Missing index.test.ts
+```
+
+**Instead, always include tests:**
+
+```
+<!-- GOOD -->
+shared/composables/
+└── use-composable/
+    ├── index.ts
+    ├── types.ts
+    └── index.test.ts  # ✅ Required
+```
+
+### ❌ Don't Return Arrays
+
+```typescript
+// BAD
+export function useComposable() {
+  return [state, action];
+}
+```
+
+**Instead, return objects:**
+
+```typescript
+// GOOD
+export function useComposable() {
+  return {
+    state,
+    action,
+  };
+}
+```
+
+### ❌ Don't Use Options API Patterns
+
+```typescript
+// BAD - Options API style
+export function useComposable() {
+  return {
+    data() { return { count: 0 } },
+    methods: { increment() { ... } }
+  };
+}
+```
+
+**Instead, use Composition API:**
+
+```typescript
+// GOOD
+export function useComposable() {
+  const count = ref(0);
+  function increment() {
+    count.value++;
+  }
+  return { count, increment };
+}
+```
+
+## Example Composable Structure
+
+### Simple Composable (no utils needed)
+
+```
+use-toggle/
+├── index.ts
+├── types.ts
+└── index.test.ts
+```
+
+### Complex Composable (with utils)
+
+```
+use-on-click-outside/
+├── index.ts
+├── types.ts
+├── utils.ts
+└── index.test.ts
+```
+
+## Composable Usage in Components
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { useOnClickOutside } from "@/shared/composables/use-on-click-outside";
+import type { UseOnClickOutsideOptions } from "@/shared/composables/use-on-click-outside/types";
+
+const popupRef = ref<HTMLDivElement | null>(null);
+const isOpen = ref(false);
+
+useOnClickOutside({
+  elementRef: popupRef,
+  handler: () => {
+    isOpen.value = false;
+  },
+  enabled: isOpen,
+});
+</script>
+```
