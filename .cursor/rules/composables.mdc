@@ -21,8 +21,7 @@ alwaysApply: true
 use-{name}/
 ├── index.ts         # Main composable logic
 ├── types.ts         # TypeScript type definitions
-├── utils.ts         # Utility functions (if needed)
-└── index.test.ts    # Test file (REQUIRED for shared composables)
+└── utils.ts         # Utility functions (if needed)
 ```
 
 ## Composable File Structure
@@ -143,44 +142,6 @@ export function transformData(input: InputType): OutputType {
 }
 ```
 
-### 4. Test File (index.test.ts)
-
-**Purpose:**
-- Comprehensive tests for the composable
-- **REQUIRED for all shared composables** (in `src/shared/composables/`)
-- Test reactive behavior, lifecycle hooks, and edge cases
-
-**Structure:**
-- Use Vitest and Vue Test Utils
-- Test composable within a Vue component context
-- Test all parameters, return values, and edge cases
-- Test lifecycle hooks (onMounted, onUnmounted, etc.)
-- Test reactive updates
-
-**Example:**
-
-```typescript
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { mount } from "@vue/test-utils";
-import { ref, defineComponent } from "vue";
-import { useComposableName } from "./index";
-
-describe("useComposableName", () => {
-  let handler: ReturnType<typeof vi.fn>;
-
-  beforeEach(() => {
-    handler = vi.fn();
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it("should work correctly", async () => {
-    // test implementation
-  });
-});
-```
 
 ## Composable Implementation Rules
 
@@ -272,23 +233,6 @@ describe("useComposableName", () => {
 - Export types from `types.ts` for convenience
 - Export utilities if needed (usually not needed)
 
-## Testing Requirements
-
-### Shared Composables
-
-- **All shared composables** (in `src/shared/composables/`) **must have a test file**
-- Test file should be named `index.test.ts` in the composable folder
-- Tests should cover:
-  - All parameters and their effects
-  - Return values and their reactivity
-  - Lifecycle hooks (onMounted, onUnmounted)
-  - Edge cases (null refs, disabled states, etc.)
-  - Side effects cleanup
-
-### Component-Specific Composables
-
-- Component-specific composables can have tests (optional)
-- Tests can be included in component test file if preferred
 
 ## Anti-Patterns to Avoid
 
@@ -353,27 +297,6 @@ onUnmounted(() => {
 });
 ```
 
-### ❌ Don't Skip Tests for Shared Composables
-
-```
-<!-- BAD -->
-shared/composables/
-└── use-composable/
-    ├── index.ts
-    └── types.ts
-    # ❌ Missing index.test.ts
-```
-
-**Instead, always include tests:**
-
-```
-<!-- GOOD -->
-shared/composables/
-└── use-composable/
-    ├── index.ts
-    ├── types.ts
-    └── index.test.ts  # ✅ Required
-```
 
 ### ❌ Don't Return Arrays
 
@@ -428,8 +351,7 @@ export function useComposable() {
 ```
 use-toggle/
 ├── index.ts
-├── types.ts
-└── index.test.ts
+└── types.ts
 ```
 
 ### Complex Composable (with utils)
@@ -438,8 +360,7 @@ use-toggle/
 use-on-click-outside/
 ├── index.ts
 ├── types.ts
-├── utils.ts
-└── index.test.ts
+└── utils.ts
 ```
 
 ## Composable Usage in Components

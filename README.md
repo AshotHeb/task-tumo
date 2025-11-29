@@ -10,7 +10,6 @@ A modern Vue.js 3 application built with TypeScript, Vite, Pinia, and Tailwind C
 - **Pinia** - State management library for Vue
 - **Vue Router** - Official router for Vue.js
 - **Tailwind CSS** - Utility-first CSS framework
-- **Vitest** - Fast unit test framework powered by Vite
 - **Axios** - Promise-based HTTP client
 
 ## Prerequisites
@@ -50,26 +49,6 @@ Preview the production build:
 
 ```bash
 npm run preview
-```
-
-### Testing
-
-Run tests:
-
-```bash
-npm test
-```
-
-Run tests with UI:
-
-```bash
-npm run test:ui
-```
-
-Run tests with coverage:
-
-```bash
-npm run test:coverage
 ```
 
 ## Project Structure
@@ -134,7 +113,6 @@ Each component follows a consistent structure:
 - `utils.ts` - Utility functions (if needed)
 - `styles.scss` - Component-specific styles
 - `index.ts` - Component exports
-- `{ComponentName}.test.ts` - Test file (required for shared components)
 
 ### Pages and Containers Pattern
 
@@ -172,13 +150,12 @@ Shared composables follow a consistent structure:
 - `index.ts` - Main composable logic
 - `types.ts` - TypeScript type definitions
 - `utils.ts` - Utility functions (if needed)
-- `index.test.ts` - Test file (required for shared composables)
 
 ## Development Guidelines
 
 This project follows strict development guidelines defined in `.cursor/rules/`:
 
-- **Components** (`components.mdc`) - Component structure, styling, and testing requirements
+- **Components** (`components.mdc`) - Component structure and styling requirements
 - **State Management** (`state-management.mdc`) - Pinia store patterns and best practices
 - **API Service** (`api.mdc`) - API structure and entity organization
 - **Composables** (`composables.mdc`) - Composable structure and implementation patterns
@@ -192,7 +169,6 @@ This project follows strict development guidelines defined in `.cursor/rules/`:
 - ✅ API service layer with Axios
 - ✅ Routing with Vue Router
 - ✅ Utility-first styling with Tailwind CSS
-- ✅ Comprehensive test coverage with Vitest
 - ✅ Reusable composables
 - ✅ Consistent code organization
 
@@ -206,24 +182,20 @@ VITE_API_BASE_URL=https://api.example.com
 
 ## Scripts Reference
 
-| Command                 | Description              |
-| ----------------------- | ------------------------ |
-| `npm run dev`           | Start development server |
-| `npm run build`         | Build for production     |
-| `npm run preview`       | Preview production build |
-| `npm test`              | Run tests                |
-| `npm run test:ui`       | Run tests with UI        |
-| `npm run test:coverage` | Run tests with coverage  |
+| Command           | Description              |
+| ----------------- | ------------------------ |
+| `npm run dev`     | Start development server |
+| `npm run build`   | Build for production     |
+| `npm run preview` | Preview production build |
 
 ## Contributing
 
 When contributing to this project, please follow the guidelines in `.cursor/rules/`:
 
 1. Follow the component structure patterns
-2. Write tests for shared components and composables
-3. Use TypeScript types consistently
-4. Follow the API service patterns
-5. Maintain consistent code style
+2. Use TypeScript types consistently
+3. Follow the API service patterns
+4. Maintain consistent code style
 
 ## License
 
