@@ -96,6 +96,8 @@ export const useMoviesStore = defineStore("movies", () => {
     // Set typing state to true if user is typing (search value is not empty)
     if (searchValue.trim().length > 0) {
       isUserTypinginSearchInput.value = true;
+    } else {
+      isUserTypinginSearchInput.value = false;
     }
   }
 
