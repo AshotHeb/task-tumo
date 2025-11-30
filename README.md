@@ -4,13 +4,15 @@ A modern Vue.js 3 application built with TypeScript, Vite, and Pinia. This proje
 
 ## Tech Stack
 
-- **Vue 3** - Progressive JavaScript framework with Composition API
-- **TypeScript** - Type safety and enhanced developer experience
-- **Vite** - Next-generation frontend build tool
-- **Pinia** - State management library for Vue
-- **Vue Router** - Official router for Vue.js
-- **Jest** - JavaScript testing framework
-- **Axios** - Promise-based HTTP client
+- **Project Type** - SPA (Single Page Application)
+- **Frontend Framework** - Vue.js 3.4.21
+- **State Management** - Pinia 2.1.7
+- **Styling** - SCSS
+- **Bundle** - Vite
+- **API Library** - Axios
+- **Test Library** - Jest
+- **AI Agent** - Cursor
+- **Cache Storage** - localStorage
 
 ## Prerequisites
 
