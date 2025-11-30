@@ -220,7 +220,8 @@ const formatRuntime = (minutes: number): string => {
 };
 
 const handleBack = (): void => {
-  router.push("/");
+  // Go back to the previous page in history
+  router.go(-1);
 };
 
 // Scroll to top function
