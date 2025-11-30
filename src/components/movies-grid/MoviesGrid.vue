@@ -210,8 +210,22 @@ useInfiniteScroll({
   elementRef: sentinelRef,
   handler: props.loadMore,
   enabled: shouldEnableInfiniteScroll,
-  threshold: 0.1,
+  rootMargin: "500px",
 });
+
+// Scroll to top when filters change (search or genres)
+watch(
+  [() => props.search, () => props.selectedGenres],
+  () => {
+    if (gridRef.value) {
+      gridRef.value.scrollTo({
+        top: 0,
+        behavior: "instant",
+      });
+    }
+  },
+  { deep: true }
+);
 
 // Mark initial load as complete after first render and when not loading
 watch(
