@@ -2,7 +2,7 @@
   <div class="movies-grid" ref="gridRef">
     <VirtualizationLoader v-if="isCalculationLoading" />
     <template v-else>
-      <div v-if="isLoading" class="movies-grid__loading">
+      <div v-if="isLoading && !isLoadingMore" class="movies-grid__loading">
         <Loader size="lg" />
       </div>
       <div v-else-if="displayMovies.length === 0" class="movies-grid__empty">

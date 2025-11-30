@@ -44,6 +44,10 @@ export const useMoviesStore = defineStore("movies", () => {
     () => filterOptions.value.search
   );
 
+  const isLoadingMore = computed<MoviesGetters["isLoadingMore"]>(() => {
+    return displayMovies.value.length > 0 && isLoading.value;
+  });
+
   const isLoading = computed<MoviesGetters["isLoading"]>(
     () =>
       isFetchMoviesLoading.value ||
@@ -60,10 +64,6 @@ export const useMoviesStore = defineStore("movies", () => {
   const displayMovies = computed<MoviesGetters["displayMovies"]>(() => {
     // Show searched movies if there's a search query or selected genres, otherwise show popular movies
     return hasActiveFilters.value ? searchedMovies.value : movies.value;
-  });
-
-  const isLoadingMore = computed<MoviesGetters["isLoadingMore"]>(() => {
-    return displayMovies.value.length > 0 && isLoading.value;
   });
 
   const canLoadMore = computed<MoviesGetters["canLoadMore"]>(() => {
