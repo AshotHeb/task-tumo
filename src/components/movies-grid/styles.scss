@@ -1,5 +1,8 @@
 .movies-grid {
-  padding: 2rem 0;
+  padding: 32px;
+  overflow: auto;
+  flex: 1;
+  position: relative;
 
   &__loading {
     display: flex;
@@ -74,6 +77,8 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    overflow: auto;
+    overflow: auto;
 
     @media (min-width: 640px) {
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -86,9 +91,9 @@
   }
 
   &__sentinel {
+    position: absolute;
     height: 1px;
     width: 100%;
-    margin-top: 2rem;
   }
 
   &__loading-more {

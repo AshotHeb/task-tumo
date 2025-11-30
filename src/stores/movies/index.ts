@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import type { MoviesState, MoviesGetters } from "./types";
+import { getNumberOfRows } from "@/utils/virtualization";
+import { useMoviesGridVirtualizationStore } from "@/stores/movies-grid-virtualization";
 import {
   getSearchFromUrl,
   updateSearchInUrl,
@@ -73,6 +75,19 @@ export const useMoviesStore = defineStore("movies", () => {
     }
     return currentPage.value < totalPages.value && !isFetchMoviesLoading.value;
   });
+
+  // Watch movies.length changes and update rows count in virtualization store
+  const virtualizationStore = useMoviesGridVirtualizationStore();
+  watch(
+    () => [movies.value.length, virtualizationStore.columnsCount] as const,
+    ([moviesLength, itemsPerRow]) => {
+      if (itemsPerRow > 0) {
+        const rowsCount = getNumberOfRows(moviesLength, itemsPerRow);
+        virtualizationStore.setMoviesRowsCount(rowsCount);
+      }
+    },
+    { immediate: true }
+  );
 
   // Actions
   function setSearch(searchValue: string): void {

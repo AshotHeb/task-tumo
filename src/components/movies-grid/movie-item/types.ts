@@ -8,5 +8,9 @@ export interface MovieItemProps {
    * Movie data to display
    */
   movie: Movie;
+  /**
+   * Whether to use absolute positioning
+   * @default false
+   */
+  isAbsolute?: boolean;
 }
-

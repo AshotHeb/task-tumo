@@ -1,3 +1,4 @@
+import type { Ref } from "vue";
 import type { Movie } from "@/api/entities/movies/types";
 
 /**
@@ -36,5 +37,8 @@ export interface MoviesGridProps {
    * Function to load more movies
    */
   loadMore: () => void;
+  /**
+   * Container element reference for height calculation
+   */
+  containerRef?: Ref<HTMLElement | null>;
 }
-

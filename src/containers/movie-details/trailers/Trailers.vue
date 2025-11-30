@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useMovieDetailsStore } from "@/stores/movie-details";
 import { Text } from "@/shared/components/atoms/text";
@@ -73,38 +73,6 @@ const trailers = computed(() => {
 
   return trailerVideos;
 });
-
-// Watch for movie changes and log trailers
-watch(
-  trailers,
-  (newTrailers) => {
-    if (newTrailers && newTrailers.length > 0) {
-      // Log the trailers
-      console.log("Movie Trailers:", {
-        movieId: movie.value?.id,
-        movieTitle: movie.value?.title,
-        totalVideos: movie.value?.videos?.results.length || 0,
-        trailers: newTrailers,
-        trailersCount: newTrailers.length,
-      });
-
-      // Log each trailer individually
-      newTrailers.forEach((trailer, index) => {
-        console.log(`Trailer ${index + 1}:`, {
-          id: trailer.id,
-          name: trailer.name,
-          key: trailer.key,
-          site: trailer.site,
-          type: trailer.type,
-          official: trailer.official,
-          publishedAt: trailer.published_at,
-          size: trailer.size,
-        });
-      });
-    }
-  },
-  { immediate: true }
-);
 </script>
 
 <style scoped lang="scss">

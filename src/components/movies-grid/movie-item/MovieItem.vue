@@ -1,9 +1,9 @@
 <template>
-  <li class="movie-item" @click="handleClick">
-    <Favorite
-      :is-favorite="isFavorite"
-      :on-click="handleFavoriteClick"
-    />
+  <li
+    :class="['movie-item', { 'movie-item--absolute': isAbsolute }]"
+    @click="handleClick"
+  >
+    <Favorite :is-favorite="isFavorite" :on-click="handleFavoriteClick" />
     <div class="movie-item__poster">
       <img
         v-if="movie.poster_path"
@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, withDefaults } from "vue";
 import { useRouter } from "vue-router";
 import type { MovieItemProps } from "./types";
 import { Text } from "@/shared/components/atoms/text";
@@ -44,7 +44,10 @@ import { Tooltip } from "@/shared/components/atoms/tooltip";
 import { Favorite } from "@/shared/components/atoms/favorite";
 import { useFavoritesStore } from "@/stores/favorites";
 
-const props = defineProps<MovieItemProps>();
+const props = withDefaults(defineProps<MovieItemProps>(), {
+  isAbsolute: false,
+});
+
 const router = useRouter();
 const favoritesStore = useFavoritesStore();
 
@@ -68,4 +71,3 @@ function handleFavoriteClick(): void {
 <style scoped lang="scss">
 @import "./styles.scss";
 </style>
-
