@@ -17,6 +17,9 @@ export const useMoviesGridVirtualizationStore = defineStore(
     const columnWidth = ref<MoviesGridVirtualizationState["columnWidth"]>(0);
     const isCalculationLoading =
       ref<MoviesGridVirtualizationState["isCalculationLoading"]>(true);
+    const moviesRowsCount =
+      ref<MoviesGridVirtualizationState["moviesRowsCount"]>(0);
+    console.log("🚀 ~ moviesRowsCount:", moviesRowsCount);
 
     // Actions
     function setGridRowHeight(height: number): void {
@@ -43,6 +46,10 @@ export const useMoviesGridVirtualizationStore = defineStore(
       isCalculationLoading.value = loading;
     }
 
+    function setMoviesRowsCount(count: number): void {
+      moviesRowsCount.value = count;
+    }
+
     return {
       // State
       gridRowHeight,
@@ -51,6 +58,7 @@ export const useMoviesGridVirtualizationStore = defineStore(
       gridHorizontalGap,
       columnWidth,
       isCalculationLoading,
+      moviesRowsCount,
       // Actions
       setGridRowHeight,
       setRowGridItemsCount,
@@ -58,6 +66,7 @@ export const useMoviesGridVirtualizationStore = defineStore(
       setGridHorizontalGap,
       setColumnWidth,
       setIsCalculationLoading,
+      setMoviesRowsCount,
     };
   }
 );

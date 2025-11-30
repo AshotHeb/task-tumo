@@ -10,6 +10,7 @@ import debounce from "lodash.debounce";
 import { useMoviesGridVirtualizationStore } from "@/stores/movies-grid-virtualization";
 import { MOCK_MOVIES } from "./consts";
 import MovieItem from "../../movie-item/MovieItem.vue";
+import { getNumberOfRows } from "@/utils/virtualization";
 
 const containerRef = ref<HTMLDivElement | null>(null);
 const virtualizationStore = useMoviesGridVirtualizationStore();
@@ -76,12 +77,17 @@ function calculateRowInfo(): void {
     }
   }
 
+  // Calculate number of rows
+  const totalItems = movies.length;
+  const numberOfRows = getNumberOfRows(totalItems, itemsPerRow);
+
   // Update store with calculated values
   virtualizationStore.setGridRowHeight(Math.round(rowHeight));
   virtualizationStore.setRowGridItemsCount(itemsPerRow);
   virtualizationStore.setGridVerticalGap(Math.round(verticalGap));
   virtualizationStore.setGridHorizontalGap(Math.round(horizontalGap));
   virtualizationStore.setColumnWidth(Math.round(itemWidth));
+  virtualizationStore.setMoviesRowsCount(numberOfRows);
   virtualizationStore.setIsCalculationLoading(false);
 }
 

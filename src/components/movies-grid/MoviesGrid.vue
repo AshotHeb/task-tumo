@@ -35,11 +35,11 @@
             :movie="movie"
           />
         </ul>
-        <!-- <div
+        <div
           ref="sentinelRef"
           class="movies-grid__sentinel"
           v-if="canLoadMore"
-        ></div> -->
+        ></div>
         <div v-if="isLoadingMore" class="movies-grid__loading-more">
           <Loader size="lg" />
         </div>

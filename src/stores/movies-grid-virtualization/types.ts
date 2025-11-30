@@ -26,6 +26,10 @@ export interface MoviesGridVirtualizationState {
    * Loading state for grid calculations
    */
   isCalculationLoading: boolean;
+  /**
+   * Number of rows in the grid
+   */
+  moviesRowsCount: number;
 }
 
 /**
@@ -63,6 +67,10 @@ export interface MoviesGridVirtualizationActions {
    * Set calculation loading state
    */
   setIsCalculationLoading: (loading: boolean) => void;
+  /**
+   * Set number of rows in the grid
+   */
+  setMoviesRowsCount: (count: number) => void;
 }
 
 /**
