@@ -10,4 +10,5 @@ export interface UseVirtualizedRenderingState {
 export interface UseVirtualizedRenderingProps {
   containerElement: Ref<HTMLElement | null>;
   rowHeight: Ref<number> | ComputedRef<number> | number;
+  rowGap: Ref<number> | ComputedRef<number> | number;
 }

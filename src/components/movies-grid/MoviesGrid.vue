@@ -107,6 +107,7 @@ const {
   gridVerticalGap,
   columnWidth,
 } = storeToRefs(virtualizationStore);
+
 const { getTopPositionOfMovies, getLeftPositionOfMovies } = virtualizationStore;
 
 const canLoadMoreRef = computed(() => props.canLoadMore);
@@ -121,6 +122,7 @@ const moviesLength = computed(() => props.displayMovies.length);
 const { visibleRange } = useVirtualizedRendering({
   containerElement: containerRef,
   rowHeight: gridRowHeight,
+  rowGap: gridVerticalGap,
 });
 
 /**

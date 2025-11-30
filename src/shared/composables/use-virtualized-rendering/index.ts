@@ -9,7 +9,7 @@ import {
 export function useVirtualizedRendering(
   props: UseVirtualizedRenderingProps
 ): UseVirtualizedRenderingState {
-  const { containerElement, rowHeight } = props;
+  const { containerElement, rowHeight, rowGap } = props;
 
   const visibleRange = ref<{ start: number; end: number }>({
     start: 0,
@@ -28,8 +28,12 @@ export function useVirtualizedRendering(
     return typeof rowHeight === "number" ? rowHeight : rowHeight.value;
   });
 
+  const rowGapValue = computed(() => {
+    return typeof rowGap === "number" ? rowGap : rowGap.value;
+  });
+
   const calculateVisibleRange = () => {
-    const currentRowHeight = rowHeightValue.value;
+    const currentRowHeight = rowHeightValue.value + rowGapValue.value;
     if (currentRowHeight === 0) {
       return;
     }
