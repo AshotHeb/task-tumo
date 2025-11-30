@@ -29,7 +29,10 @@
       </div>
       <template v-else>
         <ul class="movies-grid__grid">
-          <template v-for="(movie, index) in displayMovies" :key="movie.id">
+          <template
+            v-for="(movie, index) in displayMovies"
+            :key="`${movie.id}-${index}`"
+          >
             <MovieItem
               v-if="isItemVisible(index)"
               :movie="movie"
