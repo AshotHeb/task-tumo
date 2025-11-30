@@ -35,3 +35,11 @@ export type {
   GlobalActions,
   ActiveToast,
 } from "./global";
+
+export { useMoviesGridVirtualizationStore } from "./movies-grid-virtualization";
+export type {
+  MoviesGridVirtualizationStore,
+  MoviesGridVirtualizationState,
+  MoviesGridVirtualizationGetters,
+  MoviesGridVirtualizationActions,
+} from "./movies-grid-virtualization";
