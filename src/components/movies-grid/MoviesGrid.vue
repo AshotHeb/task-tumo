@@ -95,6 +95,8 @@ import { Text } from "@/shared/components/atoms/text";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { useMoviesGridVirtualizationStore } from "@/stores";
 import { getContainerHeight, getItemRowByIndex } from "@/utils/virtualization";
+import { useScrollPosition } from "@/shared/composables/use-scroll-position";
+import { useRoute } from "vue-router";
 
 const props = defineProps<MoviesGridProps>();
 
@@ -113,6 +115,7 @@ const {
 
 const { getTopPositionOfMovies, getLeftPositionOfMovies } = virtualizationStore;
 
+const route = useRoute();
 const canLoadMoreRef = computed(() => props.canLoadMore);
 
 // Get container ref - use prop if provided, otherwise use gridRef
@@ -126,6 +129,11 @@ const { visibleRange } = useVirtualizedRendering({
   containerElement: containerRef,
   rowHeight: gridRowHeight,
   rowGap: gridVerticalGap,
+});
+
+useScrollPosition({
+  key: route.path,
+  elementRef: gridRef,
 });
 
 /**

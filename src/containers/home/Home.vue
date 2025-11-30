@@ -7,25 +7,17 @@
 
 <script setup lang="ts">
 import { onMounted, watch, onBeforeUnmount, ref } from "vue";
-import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import debounce from "lodash.debounce";
 import { TopSection } from "@/containers/home/movies/top-section";
 import { MoviesList } from "@/containers/home/movies/list";
 import { useMoviesStore } from "@/stores/movies";
-import { useScrollPosition } from "@/shared/composables/use-scroll-position";
 
-const route = useRoute();
 const moviesStore = useMoviesStore();
 const { movies, search, filterOptions, hasActiveFilters } =
   storeToRefs(moviesStore);
 const { fetchMovies, fetchSearchedMovies, resetSearchedMovies, fetchGenres } =
   moviesStore;
-
-// Save and restore scroll position
-useScrollPosition({
-  key: route.path,
-});
 
 const isMounted = ref(false);
 let stopSearchWatcher: (() => void) | null = null;
@@ -69,7 +61,7 @@ const debouncedSearch = debounce(() => {
 onMounted(async () => {
   isMounted.value = true;
   await fetchGenres();
-  
+
   // If there are active filters (search or genres from URL), perform search
   // Otherwise, fetch popular movies if movies array is empty
   if (hasActiveFilters.value) {
