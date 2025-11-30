@@ -96,9 +96,7 @@ const debouncedCalculateRowInfo = debounce(() => {
   // Wait for next tick to ensure DOM is fully rendered
   nextTick().then(() => {
     // Add a small delay to ensure all styles are applied
-    setTimeout(() => {
-      calculateRowInfo();
-    }, 100);
+    calculateRowInfo();
   });
 }, 250);
 
