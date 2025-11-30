@@ -29,21 +29,22 @@
       </div>
       <template v-else>
         <ul class="movies-grid__grid">
-          <MovieItem
-            v-for="(movie, index) in displayMovies"
-            :key="movie.id"
-            :movie="movie"
-            :is-absolute="!isCalculationLoading"
-            :style="
-              !isCalculationLoading && columnWidth > 0
-                ? {
-                    top: `${getTopPositionOfMovies(index)}px`,
-                    left: `${getLeftPositionOfMovies(index)}px`,
-                    width: `${columnWidth}px`,
-                  }
-                : undefined
-            "
-          />
+          <template v-for="(movie, index) in displayMovies" :key="movie.id">
+            <MovieItem
+              v-if="isItemVisible(index)"
+              :movie="movie"
+              :is-absolute="!isCalculationLoading"
+              :style="
+                !isCalculationLoading && columnWidth > 0
+                  ? {
+                      top: `${getTopPositionOfMovies(index)}px`,
+                      left: `${getLeftPositionOfMovies(index)}px`,
+                      width: `${columnWidth}px`,
+                    }
+                  : undefined
+              "
+            />
+          </template>
           <div
             v-if="
               canLoadMore &&
@@ -85,11 +86,12 @@ import { MovieItem } from "./movie-item";
 import { VirtualizationLoader } from "./virtualization-loader";
 import { useInfiniteScroll } from "@/shared/composables/use-infinite-scroll";
 import { useWindowResize } from "@/shared/composables/use-window-resize";
+import { useVirtualizedRendering } from "@/shared/composables/use-virtualized-rendering";
 import { Loader } from "@/shared/components/atoms/loader";
 import { Text } from "@/shared/components/atoms/text";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { useMoviesGridVirtualizationStore } from "@/stores";
-import { getContainerHeight } from "@/utils/virtualization";
+import { getContainerHeight, getItemRowByIndex } from "@/utils/virtualization";
 
 const props = defineProps<MoviesGridProps>();
 
@@ -114,6 +116,35 @@ const containerRef = computed(() => props.containerRef?.value || gridRef.value);
 
 // Track movies list length for height recalculation
 const moviesLength = computed(() => props.displayMovies.length);
+
+// Use virtualized rendering composable to track visible rows
+const { visibleRange } = useVirtualizedRendering({
+  containerElement: containerRef,
+  rowHeight: gridRowHeight,
+});
+
+console.log("visibleRange", visibleRange);
+
+/**
+ * Checks if a movie item at the given index should be visible based on visible range
+ * @param index - Index of the movie in displayMovies array
+ * @returns True if the item's row is within the visible range
+ */
+function isItemVisible(index: number): boolean {
+  // If calculation is loading or no columns, show all items
+  if (isCalculationLoading.value || columnsCount.value === 0) {
+    return true;
+  }
+
+  // Calculate which row this item is on
+  const itemRow = getItemRowByIndex(index, columnsCount.value);
+
+  // Check if item row is within visible range
+  const range = visibleRange.value;
+  // Ensure start is not negative (clamp to 0)
+  const start = Math.max(0, range.start);
+  return itemRow >= start && itemRow <= range.end;
+}
 
 // Calculate number of rows based on total movies and items per row
 const numberOfRows = computed(() => {

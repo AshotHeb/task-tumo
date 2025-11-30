@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useMovieDetailsStore } from "@/stores/movie-details";
 import { Text } from "@/shared/components/atoms/text";
