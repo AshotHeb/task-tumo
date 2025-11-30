@@ -7,29 +7,15 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
 import debounce from "lodash.debounce";
-import type { Movie } from "@/api/entities/movies/types";
 import { useMoviesGridVirtualizationStore } from "@/stores/movies-grid-virtualization";
+import { MOCK_MOVIES } from "./consts";
 import MovieItem from "../../movie-item/MovieItem.vue";
 
 const containerRef = ref<HTMLDivElement | null>(null);
 const virtualizationStore = useMoviesGridVirtualizationStore();
 
-// Create mock movies list with 10 elements
-const movies: Movie[] = Array.from({ length: 10 }, (_, index) => ({
-  id: index + 1,
-  title: `Mock Movie ${index + 1}`,
-  overview: `This is a mock movie description for movie ${index + 1}`,
-  poster_path: null,
-  backdrop_path: null,
-  release_date: "2024-01-01",
-  vote_average: 7.5,
-  vote_count: 1000,
-  popularity: 50.0,
-  genre_ids: [1, 2, 3],
-  adult: false,
-  original_language: "en",
-  original_title: `Mock Movie ${index + 1}`,
-}));
+// Use hardcoded mock movies from consts
+const movies = MOCK_MOVIES;
 
 function calculateRowInfo(): void {
   if (!containerRef.value) {
@@ -76,7 +62,7 @@ function calculateRowInfo(): void {
   );
 
   // Get row height from first item
-  const rowHeight = firstItemRect.height;
+  const rowHeight = firstItem.offsetHeight;
 
   // Get vertical gap from CSS
   let verticalGap = 0;
