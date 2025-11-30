@@ -14,7 +14,7 @@ import { MoviesList } from "@/containers/home/movies/list";
 import { useMoviesStore } from "@/stores/movies";
 
 const moviesStore = useMoviesStore();
-const { movies, search, filterOptions, hasActiveFilters } =
+const { movies, search, filterOptions, hasActiveFilters, searchedMovies } =
   storeToRefs(moviesStore);
 const { fetchMovies, fetchSearchedMovies, resetSearchedMovies, fetchGenres } =
   moviesStore;
@@ -64,7 +64,7 @@ onMounted(async () => {
 
   // If there are active filters (search or genres from URL), perform search
   // Otherwise, fetch popular movies if movies array is empty
-  if (hasActiveFilters.value) {
+  if (!searchedMovies.value.length && hasActiveFilters.value) {
     await performSearch();
   } else if (movies.value.length === 0) {
     await fetchMovies(1, false);
