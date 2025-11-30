@@ -210,7 +210,6 @@ useInfiniteScroll({
   elementRef: sentinelRef,
   handler: props.loadMore,
   enabled: shouldEnableInfiniteScroll,
-  rootMargin: "500px",
 });
 
 // Scroll to top when filters change (search or genres)
