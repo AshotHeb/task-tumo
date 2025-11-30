@@ -123,8 +123,6 @@ const { visibleRange } = useVirtualizedRendering({
   rowHeight: gridRowHeight,
 });
 
-console.log("visibleRange", visibleRange);
-
 /**
  * Checks if a movie item at the given index should be visible based on visible range
  * @param index - Index of the movie in displayMovies array
