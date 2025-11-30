@@ -6,7 +6,7 @@
       </Text>
       <Carousel
         :items="trailers"
-        :show-arrows="true"
+        :show-arrows="trailers.length > 1"
         :show-indicators="true"
         :swipeable="true"
         class="trailers__carousel"
