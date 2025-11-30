@@ -151,8 +151,12 @@
 
 #app {
   background: var(--base-background);
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
   margin: 0;
+  overflow: hidden;
+  height: 100vh;
 }

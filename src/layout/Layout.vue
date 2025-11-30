@@ -13,4 +13,6 @@ import Header from "@/components/header/Header.vue";
 import { Toasts } from "@/components/toasts";
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@import "./styles.scss";
+</style>

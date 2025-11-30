@@ -1,5 +1,5 @@
 <template>
-  <div class="app">
+  <div class="app" style="height: 100%; overflow: hidden">
     <Layout>
       <RouterView v-slot="{ Component }">
         <Transition name="page" mode="out-in">

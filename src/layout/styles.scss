@@ -1,12 +1,13 @@
 .layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
 
   &__main {
     flex: 1;
     display: flex;
+    overflow: hidden;
     flex-direction: column;
-    overflow-y: auto;
   }
 }
