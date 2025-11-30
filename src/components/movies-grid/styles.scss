@@ -2,6 +2,7 @@
   padding: 32px;
   overflow: auto;
   flex: 1;
+  position: relative;
 
   &__loading {
     display: flex;
@@ -90,9 +91,9 @@
   }
 
   &__sentinel {
+    position: absolute;
     height: 1px;
     width: 100%;
-    margin-top: 2rem;
   }
 
   &__loading-more {

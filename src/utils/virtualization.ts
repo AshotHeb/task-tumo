@@ -17,8 +17,8 @@ export const getItemRowByIndex = (index: number, columnsCount: number) => {
 
 // index starts from 0
 export const getItemColumnByIndex = (index: number, columnsCount: number) => {
-  const rowsCount = getNumberOfRows(index, columnsCount);
-  return index - rowsCount * columnsCount;
+  const rowIndex = getItemRowByIndex(index, columnsCount);
+  return index - rowIndex * columnsCount;
 };
 
 export const getItemLeftPositionByIndex = (

@@ -67,6 +67,8 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-wrap: nowrap;
+    white-space: nowrap;
   }
 
   &__overview {

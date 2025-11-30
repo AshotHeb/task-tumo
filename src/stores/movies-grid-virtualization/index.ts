@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { MoviesGridVirtualizationState } from "./types";
+import {
+  getItemLeftPositionByIndex,
+  getItemRowByIndex,
+  getItemTopPositionByIndex,
+} from "@/utils/virtualization";
 
 export const useMoviesGridVirtualizationStore = defineStore(
   "moviesGridVirtualization",
@@ -48,6 +53,28 @@ export const useMoviesGridVirtualizationStore = defineStore(
       moviesRowsCount.value = count;
     }
 
+    function getTopPositionOfMovies(index: number) {
+      const rowIndex = getItemRowByIndex(index, columnsCount.value);
+      return (
+        getItemTopPositionByIndex(
+          rowIndex,
+          gridRowHeight.value,
+          gridVerticalGap.value
+        ) + 32 // padding
+      );
+    }
+
+    function getLeftPositionOfMovies(index: number) {
+      return (
+        getItemLeftPositionByIndex(
+          index,
+          columnsCount.value,
+          columnWidth.value,
+          gridHorizontalGap.value
+        ) + 32 // padding
+      );
+    }
+
     return {
       // State
       gridRowHeight,
@@ -65,6 +92,8 @@ export const useMoviesGridVirtualizationStore = defineStore(
       setColumnWidth,
       setIsCalculationLoading,
       setMoviesRowsCount,
+      getTopPositionOfMovies,
+      getLeftPositionOfMovies,
     };
   }
 );

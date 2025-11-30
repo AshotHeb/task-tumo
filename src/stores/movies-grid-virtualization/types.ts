@@ -71,6 +71,15 @@ export interface MoviesGridVirtualizationActions {
    * Set number of rows in the grid
    */
   setMoviesRowsCount: (count: number) => void;
+
+  /**
+   * Get top position by index
+   */
+  getTopPositionOfMovies: (index: number) => number | undefined;
+  /**
+   * Get left position by index
+   */
+  getLeftPositionOfMovies: (index: number) => number | undefined;
 }
 
 /**

@@ -30,16 +30,44 @@
       <template v-else>
         <ul class="movies-grid__grid">
           <MovieItem
-            v-for="movie in displayMovies"
+            v-for="(movie, index) in displayMovies"
             :key="movie.id"
             :movie="movie"
+            :is-absolute="!isCalculationLoading"
+            :style="
+              !isCalculationLoading && columnWidth > 0
+                ? {
+                    top: `${getTopPositionOfMovies(index)}px`,
+                    left: `${getLeftPositionOfMovies(index)}px`,
+                    width: `${columnWidth}px`,
+                  }
+                : undefined
+            "
           />
+          <div
+            v-if="
+              canLoadMore &&
+              isInitialLoadComplete &&
+              !isCalculationLoading &&
+              displayMovies.length > 0
+            "
+            ref="sentinelRef"
+            class="movies-grid__sentinel"
+            :style="
+              !isCalculationLoading && columnWidth > 0 && gridRowHeight > 0
+                ? {
+                    top: `${
+                      getTopPositionOfMovies(displayMovies.length - 1) +
+                      gridRowHeight +
+                      gridVerticalGap
+                    }px`,
+                    left: `${getLeftPositionOfMovies(0)}px`,
+                    width: `${columnWidth}px`,
+                  }
+                : undefined
+            "
+          ></div>
         </ul>
-        <div
-          ref="sentinelRef"
-          class="movies-grid__sentinel"
-          v-if="canLoadMore"
-        ></div>
         <div v-if="isLoadingMore" class="movies-grid__loading-more">
           <Loader size="lg" />
         </div>
@@ -67,10 +95,17 @@ const props = defineProps<MoviesGridProps>();
 
 const sentinelRef = ref<HTMLElement | null>(null);
 const gridRef = ref<HTMLElement | null>(null);
+const isInitialLoadComplete = ref(false);
 
 const virtualizationStore = useMoviesGridVirtualizationStore();
-const { isCalculationLoading, gridRowHeight, columnsCount, gridVerticalGap } =
-  storeToRefs(virtualizationStore);
+const {
+  isCalculationLoading,
+  gridRowHeight,
+  columnsCount,
+  gridVerticalGap,
+  columnWidth,
+} = storeToRefs(virtualizationStore);
+const { getTopPositionOfMovies, getLeftPositionOfMovies } = virtualizationStore;
 
 const canLoadMoreRef = computed(() => props.canLoadMore);
 
@@ -121,12 +156,38 @@ watch(
   { immediate: true }
 );
 
+// Prevent infinite scroll from triggering on initial page load
+const shouldEnableInfiniteScroll = computed(() => {
+  return (
+    canLoadMoreRef.value && isInitialLoadComplete.value && !props.isLoading
+  );
+});
+
 useInfiniteScroll({
   elementRef: sentinelRef,
   handler: props.loadMore,
-  enabled: canLoadMoreRef,
+  enabled: shouldEnableInfiniteScroll,
   threshold: 0.1,
 });
+
+// Mark initial load as complete after first render and when not loading
+watch(
+  [() => props.isLoading, () => props.displayMovies.length],
+  ([isLoading, moviesLength]) => {
+    if (
+      isLoading === false &&
+      typeof moviesLength === "number" &&
+      moviesLength > 0 &&
+      !isInitialLoadComplete.value
+    ) {
+      // Use setTimeout to ensure DOM is ready and prevent immediate trigger
+      setTimeout(() => {
+        isInitialLoadComplete.value = true;
+      }, 500);
+    }
+  },
+  { immediate: true }
+);
 
 // Handle window resize to recalculate grid dimensions and height
 // Show loader immediately, calculation will be debounced in MockGrid
