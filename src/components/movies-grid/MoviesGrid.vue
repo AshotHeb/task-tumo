@@ -222,10 +222,7 @@ watch(
       moviesLength > 0 &&
       !isInitialLoadComplete.value
     ) {
-      // Use setTimeout to ensure DOM is ready and prevent immediate trigger
-      setTimeout(() => {
-        isInitialLoadComplete.value = true;
-      }, 500);
+      isInitialLoadComplete.value = true;
     }
   },
   { immediate: true }
