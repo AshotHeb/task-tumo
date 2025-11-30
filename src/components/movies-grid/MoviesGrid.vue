@@ -63,7 +63,8 @@
                     top: `${
                       getTopPositionOfMovies(displayMovies.length - 1) +
                       gridRowHeight +
-                      gridVerticalGap
+                      gridVerticalGap -
+                      500 // threshold for infinite scroll
                     }px`,
                     left: `${getLeftPositionOfMovies(0)}px`,
                     width: `${columnWidth}px`,
