@@ -1,5 +1,7 @@
 .movies-grid {
-  padding: 2rem 0;
+  padding: 32px;
+  overflow: auto;
+  flex: 1;
 
   &__loading {
     display: flex;

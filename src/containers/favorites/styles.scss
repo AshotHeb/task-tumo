@@ -1,6 +1,8 @@
 .favorites {
-  padding: 2rem;
+  padding: 2rem 0;
   color: var(--color-sidebar-text);
   height: calc(100vh - 100px);
   overflow: auto;
+  display: flex;
+  flex-direction: column;
 }
