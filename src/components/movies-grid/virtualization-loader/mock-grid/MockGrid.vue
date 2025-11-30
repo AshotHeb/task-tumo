@@ -83,7 +83,7 @@ function calculateRowInfo(): void {
 
   // Update store with calculated values
   virtualizationStore.setGridRowHeight(Math.round(rowHeight));
-  virtualizationStore.setRowGridItemsCount(itemsPerRow);
+  virtualizationStore.setColumnsCount(itemsPerRow);
   virtualizationStore.setGridVerticalGap(Math.round(verticalGap));
   virtualizationStore.setGridHorizontalGap(Math.round(horizontalGap));
   virtualizationStore.setColumnWidth(Math.round(itemWidth));

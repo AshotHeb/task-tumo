@@ -69,12 +69,8 @@ const sentinelRef = ref<HTMLElement | null>(null);
 const gridRef = ref<HTMLElement | null>(null);
 
 const virtualizationStore = useMoviesGridVirtualizationStore();
-const {
-  isCalculationLoading,
-  gridRowHeight,
-  rowGridItemsCount,
-  gridVerticalGap,
-} = storeToRefs(virtualizationStore);
+const { isCalculationLoading, gridRowHeight, columnsCount, gridVerticalGap } =
+  storeToRefs(virtualizationStore);
 
 const canLoadMoreRef = computed(() => props.canLoadMore);
 
@@ -86,8 +82,8 @@ const moviesLength = computed(() => props.displayMovies.length);
 
 // Calculate number of rows based on total movies and items per row
 const numberOfRows = computed(() => {
-  if (rowGridItemsCount.value === 0) return 0;
-  return Math.ceil(moviesLength.value / rowGridItemsCount.value);
+  if (columnsCount.value === 0) return 0;
+  return Math.ceil(moviesLength.value / columnsCount.value);
 });
 
 // Function to calculate and set container height
@@ -95,7 +91,7 @@ function calculateAndSetHeight(): void {
   // Check if metrics exist and calculation is not loading
   const hasMetrics =
     gridRowHeight.value > 0 &&
-    rowGridItemsCount.value > 0 &&
+    columnsCount.value > 0 &&
     gridVerticalGap.value >= 0 &&
     numberOfRows.value > 0;
 
@@ -114,7 +110,7 @@ watch(
   [
     isCalculationLoading,
     gridRowHeight,
-    rowGridItemsCount,
+    columnsCount,
     gridVerticalGap,
     containerRef,
     numberOfRows,

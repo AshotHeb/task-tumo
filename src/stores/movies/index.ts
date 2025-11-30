@@ -79,7 +79,7 @@ export const useMoviesStore = defineStore("movies", () => {
   // Watch movies.length changes and update rows count in virtualization store
   const virtualizationStore = useMoviesGridVirtualizationStore();
   watch(
-    () => [movies.value.length, virtualizationStore.rowGridItemsCount] as const,
+    () => [movies.value.length, virtualizationStore.columnsCount] as const,
     ([moviesLength, itemsPerRow]) => {
       if (itemsPerRow > 0) {
         const rowsCount = getNumberOfRows(moviesLength, itemsPerRow);

@@ -7,9 +7,9 @@ export interface MoviesGridVirtualizationState {
    */
   gridRowHeight: number;
   /**
-   * Number of items per row in the grid
+   * Number of columns (items per row) in the grid
    */
-  rowGridItemsCount: number;
+  columnsCount: number;
   /**
    * Vertical gap between grid rows in pixels
    */
@@ -48,9 +48,9 @@ export interface MoviesGridVirtualizationActions {
    */
   setGridRowHeight: (height: number) => void;
   /**
-   * Set number of items per row in the grid
+   * Set number of columns (items per row) in the grid
    */
-  setRowGridItemsCount: (count: number) => void;
+  setColumnsCount: (count: number) => void;
   /**
    * Set vertical gap between grid rows in pixels
    */
