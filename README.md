@@ -193,6 +193,7 @@ This project follows strict development guidelines defined in `.cursor/rules/`:
 - ✅ Comprehensive test coverage with Jest
 - ✅ Reusable composables
 - ✅ Consistent code organization
+- ✅ Virtualized rendering - Only renders visible movie items to reduce DOM nodes and improve scroll performance with large lists.
 
 ## Environment Variables
 
