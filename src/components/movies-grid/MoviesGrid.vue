@@ -77,7 +77,7 @@
         </div>
       </template>
     </template>
-    <ScrollToTop :element-ref="gridRef" />
+    <ScrollToTopButton :containerRef="gridRef" />
   </div>
 </template>
 
@@ -92,7 +92,7 @@ import { useWindowResize } from "@/shared/composables/use-window-resize";
 import { useVirtualizedRendering } from "@/shared/composables/use-virtualized-rendering";
 import { Loader } from "@/shared/components/atoms/loader";
 import { Text } from "@/shared/components/atoms/text";
-import { ScrollToTop } from "@/components/scroll-to-top";
+import { ScrollToTopButton } from "@/components/scroll-to-top-button";
 import { useMoviesGridVirtualizationStore } from "@/stores";
 import { getContainerHeight, getItemRowByIndex } from "@/utils/virtualization";
 import { useScrollPosition } from "@/shared/composables/use-scroll-position";
