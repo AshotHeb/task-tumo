@@ -12,12 +12,19 @@ import debounce from "lodash.debounce";
 import { TopSection } from "@/containers/home/movies/top-section";
 import { MoviesList } from "@/containers/home/movies/list";
 import { useMoviesStore } from "@/stores/movies";
+import { getSearchFromUrl, getGenresFromUrl } from "@/stores/movies/utils";
 
 const moviesStore = useMoviesStore();
 const { movies, search, filterOptions, hasActiveFilters, searchedMovies } =
   storeToRefs(moviesStore);
-const { fetchMovies, fetchSearchedMovies, resetSearchedMovies, fetchGenres } =
-  moviesStore;
+const {
+  fetchMovies,
+  fetchSearchedMovies,
+  resetSearchedMovies,
+  fetchGenres,
+  setSearch,
+  setSelectedGenres,
+} = moviesStore;
 
 const isMounted = ref(false);
 let stopSearchWatcher: (() => void) | null = null;
@@ -57,9 +64,36 @@ const debouncedSearch = debounce(() => {
   }
 }, 300);
 
+/**
+ * Sync query params from URL to store if they differ
+ */
+function syncQueryParamsToStore(): void {
+  const urlSearch = getSearchFromUrl();
+  const urlGenres = getGenresFromUrl();
+  const storeSearch = search.value;
+  const storeGenres = filterOptions.value.selectedGenres;
+
+  // Sync search if URL has it and store doesn't match
+  if (urlSearch !== storeSearch) {
+    setSearch(urlSearch);
+  }
+
+  // Sync genres if URL has them and store doesn't match
+  const genresMatch =
+    urlGenres.length === storeGenres.length &&
+    urlGenres.every((id, index) => id === storeGenres[index]);
+  if (!genresMatch) {
+    setSelectedGenres(urlGenres);
+  }
+}
+
 // Initial load: fetch popular movies only if movies array is empty
 onMounted(async () => {
   isMounted.value = true;
+
+  // Sync query params from URL to store if they differ
+  syncQueryParamsToStore();
+
   await fetchGenres();
 
   // If there are active filters (search or genres from URL), perform search
