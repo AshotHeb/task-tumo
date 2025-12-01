@@ -56,7 +56,7 @@ export function getGenresFromUrl(): number[] {
 
   const urlParams = new URLSearchParams(window.location.search);
   const genresParam = urlParams.get(GENRES_QUERY_PARAM);
-  
+
   if (!genresParam) {
     return [];
   }
