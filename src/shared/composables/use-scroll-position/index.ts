@@ -50,9 +50,11 @@ export function useScrollPosition(
           behavior: "instant",
         });
       } else {
-        (element as HTMLElement).scrollTo({
-          top: savedPosition,
-          behavior: "instant",
+        requestAnimationFrame(() => {
+          (element as HTMLElement).scrollTo({
+            top: savedPosition,
+            behavior: "instant",
+          });
         });
       }
     }
