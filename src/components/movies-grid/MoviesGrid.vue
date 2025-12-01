@@ -28,7 +28,7 @@
         </div>
       </div>
       <template v-else>
-        <ul class="movies-grid__grid">
+        <ul class="movies-grid__grid" ref="gridListRef">
           <template
             v-for="(movie, index) in displayMovies"
             :key="`${movie.id}-${index}`"
@@ -103,6 +103,7 @@ const props = defineProps<MoviesGridProps>();
 
 const sentinelRef = ref<HTMLElement | null>(null);
 const gridRef = ref<HTMLElement | null>(null);
+const gridListRef = ref<HTMLElement | null>(null);
 const isInitialLoadComplete = ref(false);
 
 const virtualizationStore = useMoviesGridVirtualizationStore();
@@ -135,6 +136,7 @@ const { visibleRange } = useVirtualizedRendering({
 useScrollPosition({
   key: route.path,
   elementRef: gridRef,
+  waitForCondition: computed(() => !isHeightCalculated.value),
 });
 
 /**
@@ -164,6 +166,9 @@ const numberOfRows = computed(() => {
   return Math.ceil(moviesLength.value / columnsCount.value);
 });
 
+// Track if height has been calculated and set
+const isHeightCalculated = ref(false);
+
 // Function to calculate and set container height
 function calculateAndSetHeight(): void {
   // Check if metrics exist and calculation is not loading
@@ -173,13 +178,16 @@ function calculateAndSetHeight(): void {
     gridVerticalGap.value >= 0 &&
     numberOfRows.value > 0;
 
-  if (!isCalculationLoading.value && hasMetrics && containerRef.value) {
+  if (!isCalculationLoading.value && hasMetrics && gridListRef.value) {
     const height = getContainerHeight(
       gridRowHeight.value,
       numberOfRows.value,
       gridVerticalGap.value
     );
-    containerRef.value.style.height = `${height}px`;
+    gridListRef.value.style.height = `${height}px`;
+    isHeightCalculated.value = true;
+  } else {
+    isHeightCalculated.value = false;
   }
 }
 
@@ -190,7 +198,7 @@ watch(
     gridRowHeight,
     columnsCount,
     gridVerticalGap,
-    containerRef,
+    gridListRef,
     numberOfRows,
   ],
   () => {

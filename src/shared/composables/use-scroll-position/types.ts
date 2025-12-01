@@ -1,4 +1,4 @@
-import type { Ref } from "vue";
+import type { Ref, ComputedRef } from "vue";
 
 /**
  * Options for useScrollPosition composable
@@ -23,6 +23,11 @@ export interface UseScrollPositionOptions {
    * @default true
    */
   restoreOnMount?: boolean;
+  /**
+   * Condition to wait for before restoring scroll position
+   * Scroll will be restored when this becomes falsy (e.g., when calculation is complete)
+   */
+  waitForCondition?: Ref<boolean> | ComputedRef<boolean>;
 }
 
 /**

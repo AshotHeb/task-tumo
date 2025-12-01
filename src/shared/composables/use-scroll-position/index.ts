@@ -1,4 +1,11 @@
-import { onMounted, onBeforeUnmount, computed, unref } from "vue";
+import {
+  onMounted,
+  onBeforeUnmount,
+  computed,
+  unref,
+  watch,
+  nextTick,
+} from "vue";
 import { useScrollPositionStore } from "@/stores/scroll-position";
 import type {
   UseScrollPositionOptions,
@@ -13,6 +20,7 @@ export function useScrollPosition(
     elementRef,
     saveOnUnmount = true,
     restoreOnMount = true,
+    waitForCondition,
   } = options;
 
   const scrollPositionStore = useScrollPositionStore();
@@ -62,7 +70,24 @@ export function useScrollPosition(
 
   onMounted(() => {
     if (restoreOnMount) {
-      restorePosition();
+      if (waitForCondition) {
+        // Wait for condition to become falsy (e.g., calculation complete)
+        const stopWatcher = watch(
+          waitForCondition,
+          (isWaiting) => {
+            if (!isWaiting) {
+              // Wait for next tick to ensure DOM is updated
+              nextTick(() => {
+                restorePosition();
+                stopWatcher();
+              });
+            }
+          },
+          { immediate: true }
+        );
+      } else {
+        restorePosition();
+      }
     }
   });
 
