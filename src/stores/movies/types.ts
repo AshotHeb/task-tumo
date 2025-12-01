@@ -55,6 +55,7 @@ export interface MoviesActions {
   resetMovies: () => void;
   resetSearchedMovies: () => void;
   resetFilters: () => void;
+  applyFiltersToUrl: () => void;
 }
 
 /**

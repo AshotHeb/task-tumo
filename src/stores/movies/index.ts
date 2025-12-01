@@ -275,6 +275,12 @@ export const useMoviesStore = defineStore("movies", () => {
     isUserTypinginSearchInput.value = false;
   }
 
+  function applyFiltersToUrl(): void {
+    // Apply current filters from store to URL params
+    updateSearchInUrl(filterOptions.value.search);
+    updateGenresInUrl(filterOptions.value.selectedGenres);
+  }
+
   return {
     // State
     filterOptions,
@@ -305,6 +311,7 @@ export const useMoviesStore = defineStore("movies", () => {
     resetMovies,
     resetSearchedMovies,
     resetFilters,
+    applyFiltersToUrl,
   };
 });
 
