@@ -16,7 +16,7 @@ A modern Vue.js 3 application built with TypeScript, Vite, and Pinia. This proje
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 18+ ( 22.19.0 )
 - npm or yarn
 
 ## Getting Started
