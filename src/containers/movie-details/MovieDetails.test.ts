@@ -13,6 +13,7 @@ import type { MovieDetails as MovieDetailsType } from "@/api/entities/movies/typ
 
 // Mock vue-router
 const mockPush = jest.fn();
+const mockGo = jest.fn();
 interface MockRouteParams {
   id: string | number | null | undefined;
 }
@@ -25,6 +26,7 @@ jest.mock("vue-router", () => ({
   useRoute: () => mockRoute,
   useRouter: () => ({
     push: mockPush,
+    go: mockGo,
   }),
 }));
 
@@ -491,7 +493,7 @@ describe("MovieDetails", () => {
       const backButton = wrapper.find(".movie-details__back-button");
       await backButton.trigger("click");
 
-      expect(mockPush).toHaveBeenCalledWith("/");
+      expect(mockGo).toHaveBeenCalledWith(-1);
     });
 
     it("should call toggleFavorite when favorite button is clicked", async () => {
