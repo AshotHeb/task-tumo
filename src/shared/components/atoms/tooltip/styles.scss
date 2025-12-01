@@ -23,6 +23,11 @@
   word-wrap: break-word;
   white-space: normal;
 
+  // Hide tooltip on mobile devices
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+
   // Position variants
   &--top {
     bottom: calc(100% + 0.5rem);
