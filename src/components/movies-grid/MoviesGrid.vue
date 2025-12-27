@@ -5,7 +5,10 @@
       <div v-if="isLoading && !isLoadingMore" class="movies-grid__loading">
         <Loader size="lg" />
       </div>
-      <div v-else-if="displayMovies.length === 0" class="movies-grid__empty">
+      <div
+        v-else-if="visibleItemsData.data.length === 0"
+        class="movies-grid__empty"
+      >
         <div class="movies-grid__empty-content">
           <Text size="lg" weight="semibold" class="movies-grid__empty-title">
             No movies found
@@ -30,18 +33,21 @@
       <template v-else>
         <ul class="movies-grid__grid" ref="gridListRef">
           <template
-            v-for="(movie, index) in displayMovies"
+            v-for="(movie, index) in visibleItemsData.data"
             :key="`${movie.id}-${index}`"
           >
             <MovieItem
-              v-if="isItemVisible(index)"
               :movie="movie"
               :is-absolute="!isCalculationLoading"
               :style="
                 !isCalculationLoading && columnWidth > 0
                   ? {
-                      top: `${getTopPositionOfMovies(index)}px`,
-                      left: `${getLeftPositionOfMovies(index)}px`,
+                      top: `${getTopPositionOfMovies(
+                        visibleItemsData.startIndex + index
+                      )}px`,
+                      left: `${getLeftPositionOfMovies(
+                        visibleItemsData.startIndex + index
+                      )}px`,
                       width: `${columnWidth}px`,
                     }
                   : undefined
@@ -53,7 +59,7 @@
               canLoadMore &&
               isInitialLoadComplete &&
               !isCalculationLoading &&
-              displayMovies.length > 0
+              visibleItemsData.data.length > 0
             "
             ref="sentinelRef"
             class="movies-grid__sentinel"
@@ -95,7 +101,7 @@ import { Loader } from "@/shared/components/atoms/loader";
 import { Text } from "@/shared/components/atoms/text";
 import { ScrollToTopButton } from "@/components/scroll-to-top-button";
 import { useMoviesGridVirtualizationStore } from "@/stores";
-import { getContainerHeight, getItemRowByIndex } from "@/utils/virtualization";
+import { getContainerHeight } from "@/utils/virtualization";
 import { useScrollPosition } from "@/shared/composables/use-scroll-position";
 import { useRoute } from "vue-router";
 
@@ -133,32 +139,27 @@ const { visibleRange } = useVirtualizedRendering({
   rowGap: gridVerticalGap,
 });
 
+const visibleItemsData = computed(() => {
+  const visibleFirRowIndex =
+    visibleRange.value.start > 0 ? visibleRange.value.start : 0;
+  const visibleLastRowIndex = visibleRange.value.end;
+
+  const sliceStartIndex = visibleFirRowIndex * columnsCount.value;
+  const sliceEndIndex = visibleLastRowIndex * columnsCount.value;
+
+  console.log("Computed");
+
+  return {
+    data: props.displayMovies.slice(sliceStartIndex, sliceEndIndex),
+    startIndex: sliceStartIndex,
+  };
+});
+
 useScrollPosition({
   key: route.path,
   elementRef: gridRef,
   waitForCondition: computed(() => !isHeightCalculated.value),
 });
-
-/**
- * Checks if a movie item at the given index should be visible based on visible range
- * @param index - Index of the movie in displayMovies array
- * @returns True if the item's row is within the visible range
- */
-function isItemVisible(index: number): boolean {
-  // If calculation is loading or no columns, show all items
-  if (isCalculationLoading.value || columnsCount.value === 0) {
-    return true;
-  }
-
-  // Calculate which row this item is on
-  const itemRow = getItemRowByIndex(index, columnsCount.value);
-
-  // Check if item row is within visible range
-  const range = visibleRange.value;
-  // Ensure start is not negative (clamp to 0)
-  const start = Math.max(0, range.start);
-  return itemRow >= start && itemRow <= range.end;
-}
 
 // Calculate number of rows based on total movies and items per row
 const numberOfRows = computed(() => {
